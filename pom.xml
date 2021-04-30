@@ -14,6 +14,11 @@
     <name>covimyn-ingestion</name>
     <description>Covid19 Myntra - Injestion Project</description>
     <properties>
+        <package.number>${maven.build.timestamp}</package.number>
+        <rpm.name>covimyn-ingestion</rpm.name>
+        <app.home>/myntra/ingestion/releases</app.home>
+        <maven.build.timestamp.format>yyyyMMddHHmmssSSS</maven.build.timestamp.format>
+
         <java.version>8</java.version>
     </properties>
     <dependencies>
@@ -39,17 +44,112 @@
 
     <build>
         <plugins>
+            <!-- Plugin for generating java classes from proto files -->
+            <plugin>
+                <groupId>org.xolstice.maven.plugins</groupId>
+                <artifactId>protobuf-maven-plugin</artifactId>
+                <version>0.5.1</version>
+                <configuration>
+                    <protocArtifact>com.google.protobuf:protoc:3.6.1:exe:${os.detected.classifier}</protocArtifact>
+                    <pluginId>grpc-java</pluginId>
+                    <pluginArtifact>io.grpc:protoc-gen-grpc-java:1.19.0:exe:${os.detected.classifier}</pluginArtifact>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>compile</goal>
+                            <goal>compile-custom</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
-                    <excludes>
-                        <exclude>
-                            <groupId>org.projectlombok</groupId>
-                            <artifactId>lombok</artifactId>
-                        </exclude>
-                    </excludes>
+                    <finalName>covimyn-ingestion</finalName>
+                    <mainClass>com.covimyn.ingestion.CoviMynIngestionApplication</mainClass>
                 </configuration>
+            </plugin>
+            <!--RPM setup -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>rpm-maven-plugin</artifactId>
+                <version>2.1-alpha-4</version>
+                <executions>
+                    <execution>
+                        <id>0</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>attached-rpm</goal>
+                        </goals>
+                        <configuration>
+                            <name>${rpm.name}-ops</name>
+                            <version>${project.version}${package.number}</version>
+                            <copyright>2018, Myntra Designs Pvt Ltd</copyright>
+                            <group>Applications/Programming</group>
+                            <description>Charge service : RPM Package</description>
+                            <autoProvides>true</autoProvides>
+                            <autoRequires>true</autoRequires>
+                            <mappings>
+                                <mapping>
+                                    <directory>${app.home}/${project.version}${package.number}_1/scripts</directory>
+                                    <filemode>755</filemode>
+                                    <username>myntra</username>
+                                    <groupname>myntra</groupname>
+                                    <sources>
+                                        <source>
+                                            <location>src/main/tomcatconf/scripts</location>
+                                        </source>
+                                    </sources>
+                                </mapping>
+                            </mappings>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>1</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>rpm</goal>
+                        </goals>
+                        <configuration>
+                            <name>${rpm.name}-app</name>
+                            <version>${project.version}${package.number}</version>
+                            <copyright>2012, Myntra Designs Pvt Ltd</copyright>
+                            <group>Applications/Programming</group>
+                            <description>Covid Myntra : Ingestion</description>
+                            <autoProvides>true</autoProvides>
+                            <autoRequires>true</autoRequires>
+                            <mappings>
+                                <mapping>
+                                    <directory>${app.home}/${project.version}${package.number}_1/bin</directory>
+                                    <filemode>755</filemode>
+                                    <username>myntra</username>
+                                    <groupname>myntra</groupname>
+                                    <sources>
+                                        <source>
+                                            <location>src/main/tomcatconf/bin</location>
+                                        </source>
+                                    </sources>
+                                </mapping>
+                                <mapping>
+                                    <directory>${app.home}/${project.version}${package.number}_1/webapps/
+                                    </directory>
+                                    <filemode>755</filemode>
+                                    <username>myntra</username>
+                                    <groupname>myntra</groupname>
+                                    <sources>
+                                        <source>
+                                            <location>${project.build.outputDirectory}/../covimyn-ingestion.jar
+                                            </location>
+                                        </source>
+                                    </sources>
+                                </mapping>
+                            </mappings>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
