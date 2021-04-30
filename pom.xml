@@ -19,7 +19,7 @@
         <app.home>/myntra/ingestion/releases</app.home>
         <maven.build.timestamp.format>yyyyMMddHHmmssSSS</maven.build.timestamp.format>
 
-        <java.version>8</java.version>
+        <java.version>1.8</java.version>
     </properties>
     <dependencies>
         <dependency>
@@ -44,26 +44,6 @@
 
     <build>
         <plugins>
-            <!-- Plugin for generating java classes from proto files -->
-            <plugin>
-                <groupId>org.xolstice.maven.plugins</groupId>
-                <artifactId>protobuf-maven-plugin</artifactId>
-                <version>0.5.1</version>
-                <configuration>
-                    <protocArtifact>com.google.protobuf:protoc:3.6.1:exe:${os.detected.classifier}</protocArtifact>
-                    <pluginId>grpc-java</pluginId>
-                    <pluginArtifact>io.grpc:protoc-gen-grpc-java:1.19.0:exe:${os.detected.classifier}</pluginArtifact>
-                </configuration>
-                <executions>
-                    <execution>
-                        <phase>validate</phase>
-                        <goals>
-                            <goal>compile</goal>
-                            <goal>compile-custom</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
@@ -87,9 +67,9 @@
                         <configuration>
                             <name>${rpm.name}-ops</name>
                             <version>${project.version}${package.number}</version>
-                            <copyright>2018, Myntra Designs Pvt Ltd</copyright>
+                            <copyright>2021, Myntra Designs Pvt Ltd</copyright>
                             <group>Applications/Programming</group>
-                            <description>Charge service : RPM Package</description>
+                            <description>Covid Myntra - Ingestion : RPM Package</description>
                             <autoProvides>true</autoProvides>
                             <autoRequires>true</autoRequires>
                             <mappings>
