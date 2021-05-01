@@ -20,8 +20,8 @@ public class IngestionController {
 
     @PostMapping(value = "/bulk/create")
     public ResponseEntity<String> resourceBulkCreate() {
-        ingestionService.resourceBulkCreate();
-        return new ResponseEntity<>("Successfully updated rows from the spreadsheet", HttpStatus.OK);
+        int rows = ingestionService.resourceBulkCreate();
+        return new ResponseEntity<>("Successfully updated " + rows + " rows from the spreadsheet", HttpStatus.OK);
     }
 
     @GetMapping(value = "/lastupdate")
