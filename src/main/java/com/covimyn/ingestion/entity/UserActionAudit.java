@@ -8,8 +8,9 @@ import javax.persistence.*;
 import java.util.Date;
 
 @Entity
+@Table(name = "user_actions_audit")
 @Data
-public class UserActionFlag {
+public class UserActionAudit {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -19,6 +20,7 @@ public class UserActionFlag {
     private Long resourceId;
 
     @Column(name = "feedback_type")
+    @Enumerated(EnumType.STRING)
     private FeedbackType feedbackType;
 
     @Column(name = "updated_on")
