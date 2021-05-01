@@ -7,4 +7,6 @@ public interface IngestionService {
    int resourceBulkCreate();
 
    DateTime fetchLastModifiedOn();
+
+   int resourceBulkUpdate();
 }

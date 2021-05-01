@@ -16,6 +16,12 @@ public class ResourceDetails {
     @Column(name = "name")
     private String name;
 
+    @Column(name = "category")
+    private String category;
+
+    @Column(name = "resource_type")
+    private String resourceType;
+
     @Column(name = "address")
     private String address;
 
@@ -34,8 +40,8 @@ public class ResourceDetails {
     @Column(name = "email")
     private String email;
 
-    @Column(name = "district")
-    private String district;
+    @Column(name = "city")
+    private String city;
 
     @Column(name = "state")
     private String state;
@@ -51,6 +57,9 @@ public class ResourceDetails {
 
     @Column(name = "created_on")
     private Long createdOn;
+
+    @Column(name = "updated_on")
+    private Long updatedOn;
 
     @Column(name = "is_verified")
     private boolean isVerified;
