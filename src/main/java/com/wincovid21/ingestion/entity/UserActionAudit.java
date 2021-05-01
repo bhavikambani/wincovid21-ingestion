@@ -19,7 +19,6 @@ public class UserActionAudit {
     private Long resourceId;
 
     @Column(name = "feedback_type")
-    @Enumerated(EnumType.STRING)
     private String feedbackType;
 
     @Column(name = "updated_on")
