@@ -20,7 +20,6 @@ public class HelloCoviMyn {
     @GetMapping("/")
     public String sayHello() {
         UserActionAudit userActionFlag = new UserActionAudit();
-        userActionFlag.setFeedbackType(FeedbackType.A);
         userActionFlag.setResourceId(123L);
         userActionFlag.setUpdatedOn(new Date());
 
