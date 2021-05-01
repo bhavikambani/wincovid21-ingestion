@@ -25,12 +25,11 @@ public class IngestionServiceImpl implements IngestionService {
         try {
             String spreadsheetId = "1v7jhxNGgWmIzxCyCLoN6izxBaDgB0_zWy7AxTW32N1o";
             Sheets sheetsService = sheetsServiceUtil.getSheetsService();
-            List<String> ranges = Arrays.asList("E1","E4");
-            BatchGetValuesResponse readResult = sheetsService.spreadsheets().values()
-                    .batchGet(spreadsheetId)
-                    .setRanges(ranges)
+            String range = "Class Data";
+            ValueRange readResult = sheetsService.spreadsheets().values()
+                    .get(spreadsheetId,range)
                     .execute();
-            return readResult.getValueRanges().size();
+            return readResult.getValues().size();
         } catch (Exception e) {
             return 0;
         }
