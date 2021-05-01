@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="true" scanPeriod="120 seconds">
+    <statusListener class="ch.qos.logback.core.status.NopStatusListener"/>
+
+    <springProperty scope="context" name="LOG_PATH" source="logging.path" defaultValue="./"/>
+
+    <appender name="INFOLOGS" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_PATH}/logs/coviingestion-info.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+            <fileNamePattern>${LOG_PATH}/logs/coviingestion-info-%i.log</fileNamePattern>
+            <minIndex>1</minIndex>
+            <maxIndex>50</maxIndex>
+        </rollingPolicy>
+
+        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+            <maxFileSize>10MB</maxFileSize>
+        </triggeringPolicy>
+
+        <encoder>
+            <Pattern>%date{dd-MM-yyyy;HH:mm:ss.SSS}|[%mdc{storeid}]|[%mdc{req}]|[%thread] %-5level %logger{36} - %msg%n
+            </Pattern>
+        </encoder>
+
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>ERROR</level>
+            <onMatch>DENY</onMatch>
+            <onMismatch>ACCEPT</onMismatch>
+        </filter>
+    </appender>
+
+    <appender name="ERRORLOGS" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_PATH}/logs/coviingestion-error.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+            <fileNamePattern>${LOG_PATH}/logs/coviingestion-error-%i.log</fileNamePattern>
+            <minIndex>1</minIndex>
+            <maxIndex>50</maxIndex>
+        </rollingPolicy>
+
+        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+            <maxFileSize>10MB</maxFileSize>
+        </triggeringPolicy>
+
+        <encoder>
+            <Pattern>%date{dd-MM-yyyy;HH:mm:ss.SSS}|[%mdc{storeid}]|[%mdc{req}]|[%thread] %-5level %logger{36} - %msg%n
+            </Pattern>
+        </encoder>
+
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>ERROR</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+    </appender>
+
+    <logger name="com.covimyn.ingestion" additivity="false">
+        <appender-ref ref="INFOLOGS"/>
+        <appender-ref ref="ERRORLOGS"/>
+    </logger>
+
+    <root level="INFO">
+        <appender-ref ref="INFOLOGS"/>
+        <appender-ref ref="ERRORLOGS"/>
+    </root>
+
+</configuration>

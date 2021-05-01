@@ -1,0 +1,10 @@
+com/covimyn/ingestion/domain/IngestionResponse$IngestionResponseBuilder.class
+com/covimyn/ingestion/domain/FeedbackType.class
+com/covimyn/ingestion/service/UserActionService.class
+com/covimyn/ingestion/repository/UserActionAuditRepository.class
+com/covimyn/ingestion/controller/UserActionController.class
+com/covimyn/ingestion/entity/UserActionAudit.class
+com/covimyn/ingestion/domain/IngestionResponse.class
+com/covimyn/ingestion/CoviMynIngestionApplication.class
+com/covimyn/ingestion/controller/HelloCoviMyn.class
+com/covimyn/ingestion/service/UserActionServiceImpl.class

@@ -1,0 +1,9 @@
+/Users/300004204/Work/WorkSpace/CovidProject2021/CovimynIngestion/covimyn-ingestion/src/main/java/com/covimyn/ingestion/controller/HelloCoviMyn.java
+/Users/300004204/Work/WorkSpace/CovidProject2021/CovimynIngestion/covimyn-ingestion/src/main/java/com/covimyn/ingestion/service/UserActionServiceImpl.java
+/Users/300004204/Work/WorkSpace/CovidProject2021/CovimynIngestion/covimyn-ingestion/src/main/java/com/covimyn/ingestion/controller/UserActionController.java
+/Users/300004204/Work/WorkSpace/CovidProject2021/CovimynIngestion/covimyn-ingestion/src/main/java/com/covimyn/ingestion/service/UserActionService.java
+/Users/300004204/Work/WorkSpace/CovidProject2021/CovimynIngestion/covimyn-ingestion/src/main/java/com/covimyn/ingestion/entity/UserActionAudit.java
+/Users/300004204/Work/WorkSpace/CovidProject2021/CovimynIngestion/covimyn-ingestion/src/main/java/com/covimyn/ingestion/CoviMynIngestionApplication.java
+/Users/300004204/Work/WorkSpace/CovidProject2021/CovimynIngestion/covimyn-ingestion/src/main/java/com/covimyn/ingestion/domain/IngestionResponse.java
+/Users/300004204/Work/WorkSpace/CovidProject2021/CovimynIngestion/covimyn-ingestion/src/main/java/com/covimyn/ingestion/domain/FeedbackType.java
+/Users/300004204/Work/WorkSpace/CovidProject2021/CovimynIngestion/covimyn-ingestion/src/main/java/com/covimyn/ingestion/repository/UserActionAuditRepository.java
