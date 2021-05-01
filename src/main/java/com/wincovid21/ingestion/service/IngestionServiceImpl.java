@@ -44,6 +44,7 @@ public class IngestionServiceImpl implements IngestionService {
                     for(int j=0;j<existingResourceList.size();j++) {
                         if(existingResourceList.get(j).getName().equalsIgnoreCase(String.valueOf(rowValue.get(2))) &&
                                existingResourceList.get(j).getResourceType().equalsIgnoreCase(String.valueOf(rowValue.get(4)))) {
+                            logger.error("Exact entry already present across {} so create operation is invalid",rowValue);
                             continue;
                         }
                         ResourceDetails resourceDetails = resourceDetailsUtil.convertToEntity(rowValue);
