@@ -1,6 +1,5 @@
 package com.covimyn.ingestion.entity;
 
-
 import com.covimyn.ingestion.domain.FeedbackType;
 import lombok.Data;
 

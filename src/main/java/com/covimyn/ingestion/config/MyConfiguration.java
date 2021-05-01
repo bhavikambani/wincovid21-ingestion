@@ -2,6 +2,7 @@ package com.covimyn.ingestion.config;
 
 import com.covimyn.ingestion.service.impl.IngestionServiceImpl;
 import com.covimyn.ingestion.util.GoogleAuthorizeUtil;
+import com.covimyn.ingestion.util.ResourceDetailsUtil;
 import com.covimyn.ingestion.util.SheetsServiceUtil;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -21,8 +22,12 @@ public class MyConfiguration {
 
     @Bean
     public IngestionServiceImpl ingestionService() {
-        SheetsServiceUtil sheetsServiceUtil= new SheetsServiceUtil();
-        return new IngestionServiceImpl(sheetsServiceUtil);
+        return new IngestionServiceImpl();
+    }
+
+    @Bean
+    public ResourceDetailsUtil resourceDetailsUtil() {
+        return new ResourceDetailsUtil();
     }
 
 
