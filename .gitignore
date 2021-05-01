@@ -4,6 +4,9 @@
 # Log file
 *.log
 
+.idea/
+covimyn-ingestion.iml
+
 # BlueJ files
 *.ctxt
 

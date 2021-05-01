@@ -1,4 +1,4 @@
-package com.covimyn.ingestion.domain;
+package com.wincovid21.ingestion.domain;
 
 import lombok.Builder;
 import lombok.Data;

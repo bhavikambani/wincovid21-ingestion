@@ -1,4 +1,4 @@
-package com.covimyn.ingestion.entity;
+package com.wincovid21.ingestion.entity;
 
 
 import lombok.Data;

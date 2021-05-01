@@ -1,8 +1,8 @@
-package com.covimyn.ingestion.util.cache;
+package com.wincovid21.ingestion.util.cache;
 
 
-import com.covimyn.ingestion.entity.FeedbackType;
-import com.covimyn.ingestion.repository.FeedbackTypesRepository;
+import com.wincovid21.ingestion.entity.FeedbackType;
+import com.wincovid21.ingestion.repository.FeedbackTypesRepository;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import lombok.NonNull;

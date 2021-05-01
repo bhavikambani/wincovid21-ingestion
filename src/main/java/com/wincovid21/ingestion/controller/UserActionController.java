@@ -1,4 +1,4 @@
-package com.covimyn.ingestion.controller;
+package com.wincovid21.ingestion.controller;
 
 import org.springframework.stereotype.Controller;
 

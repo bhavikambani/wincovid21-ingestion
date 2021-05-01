@@ -1,6 +1,6 @@
-package com.covimyn.ingestion.service;
+package com.wincovid21.ingestion.service;
 
-import com.covimyn.ingestion.entity.UserActionAudit;
+import com.wincovid21.ingestion.entity.UserActionAudit;
 import lombok.NonNull;
 import org.springframework.stereotype.Service;
 

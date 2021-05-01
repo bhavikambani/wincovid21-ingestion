@@ -1,4 +1,4 @@
-package com.covimyn.ingestion.util.validator;
+package com.wincovid21.ingestion.util.validator;
 
 import com.newrelic.api.agent.Trace;
 

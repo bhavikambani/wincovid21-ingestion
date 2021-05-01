@@ -9,14 +9,14 @@
         <relativePath/>
     </parent>
     <groupId>com.covimyn</groupId>
-    <artifactId>covimyn-ingestion</artifactId>
+    <artifactId>wincovid21-ingestion</artifactId>
     <version>1.0.1-SNAPSHOT</version>
-    <name>covimyn-ingestion</name>
-    <description>Covid19 Myntra - Injestion Project</description>
+    <name>wincovid21-ingestion</name>
+    <description>Covid19 Injestion Project</description>
     <properties>
         <package.number>${maven.build.timestamp}</package.number>
         <rpm.name>covimyn-ingestion</rpm.name>
-        <app.home>/myntra/ingestion/releases</app.home>
+        <app.home>/covid21/ingestion/releases</app.home>
         <maven.build.timestamp.format>yyyyMMddHHmmssSSS</maven.build.timestamp.format>
 
         <java.version>1.8</java.version>
@@ -87,8 +87,8 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
-                    <finalName>covimyn-ingestion</finalName>
-                    <mainClass>com.covimyn.ingestion.CoviMynIngestionApplication</mainClass>
+                    <finalName>wincovid21-ingestion</finalName>
+                    <mainClass>com.wincovid21.ingestion.WinCovid21IngestionApplication</mainClass>
                 </configuration>
             </plugin>
             <!--RPM setup -->
@@ -135,17 +135,16 @@
                         <configuration>
                             <name>${rpm.name}-app</name>
                             <version>${project.version}${package.number}</version>
-                            <copyright>2012, Myntra Designs Pvt Ltd</copyright>
                             <group>Applications/Programming</group>
-                            <description>Covid Myntra : Ingestion</description>
+                            <description>Covid 21 : Ingestion</description>
                             <autoProvides>true</autoProvides>
                             <autoRequires>true</autoRequires>
                             <mappings>
                                 <mapping>
                                     <directory>${app.home}/${project.version}${package.number}_1/bin</directory>
                                     <filemode>755</filemode>
-                                    <username>myntra</username>
-                                    <groupname>myntra</groupname>
+                                    <username>root</username>
+                                    <groupname>root</groupname>
                                     <sources>
                                         <source>
                                             <location>src/main/tomcatconf/bin</location>
@@ -156,11 +155,11 @@
                                     <directory>${app.home}/${project.version}${package.number}_1/webapps/
                                     </directory>
                                     <filemode>755</filemode>
-                                    <username>myntra</username>
-                                    <groupname>myntra</groupname>
+                                    <username>root</username>
+                                    <groupname>root</groupname>
                                     <sources>
                                         <source>
-                                            <location>${project.build.outputDirectory}/../covimyn-ingestion.jar
+                                            <location>${project.build.outputDirectory}/../wincovid21-ingestion.jar
                                             </location>
                                         </source>
                                     </sources>

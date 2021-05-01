@@ -1,6 +1,6 @@
-package com.covimyn.ingestion.repository;
+package com.wincovid21.ingestion.repository;
 
-import com.covimyn.ingestion.entity.FeedbackType;
+import com.wincovid21.ingestion.entity.FeedbackType;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 

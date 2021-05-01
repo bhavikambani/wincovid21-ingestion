@@ -1,6 +1,6 @@
-package com.covimyn.ingestion.util.validator;
+package com.wincovid21.ingestion.util.validator;
 
-import com.covimyn.ingestion.entity.UserActionAudit;
+import com.wincovid21.ingestion.entity.UserActionAudit;
 import com.newrelic.api.agent.Trace;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;

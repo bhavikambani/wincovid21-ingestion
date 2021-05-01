@@ -1,4 +1,4 @@
-package com.covimyn.ingestion.util.cache;
+package com.wincovid21.ingestion.util.cache;
 
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Value;
