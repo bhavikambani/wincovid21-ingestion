@@ -16,7 +16,7 @@ public class UserActionAudit {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @Column(name = "resouce_id")
+    @Column(name = "resource_id")
     private Long resourceId;
 
     @Column(name = "feedback_type")
