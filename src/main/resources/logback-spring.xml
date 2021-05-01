@@ -52,14 +52,23 @@
         </filter>
     </appender>
 
-    <logger name="com.covimyn.ingestion" additivity="false">
+    <appender name="ASYNC_INFO" class="ch.qos.logback.classic.AsyncAppender">
+        <queueSize>25000</queueSize>
+        <neverBlock>true</neverBlock>
+        <maxFlushTime>100</maxFlushTime>
+        <includeCallerData>true</includeCallerData>
         <appender-ref ref="INFOLOGS"/>
+    </appender>
+
+    <logger name="com.wincovid21.ingestion" additivity="false">
+        <appender-ref ref="STDOUT"/>
+        <appender-ref ref="ASYNC_INFO"/>
         <appender-ref ref="ERRORLOGS"/>
     </logger>
 
     <root level="INFO">
-        <appender-ref ref="INFOLOGS"/>
+        <appender-ref ref="STDOUT"/>
+        <appender-ref ref="ASYNC_INFO"/>
         <appender-ref ref="ERRORLOGS"/>
     </root>
-
 </configuration>

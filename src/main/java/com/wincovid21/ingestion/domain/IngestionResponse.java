@@ -8,6 +8,6 @@ import org.springframework.http.HttpStatus;
 @Builder
 public class IngestionResponse<T> {
     private final HttpStatus httpStatus;
-    private final T data;
+    private final T result;
     private final String transactionReference;
 }

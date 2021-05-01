@@ -1,15 +1,17 @@
 package com.wincovid21.ingestion.util.cache;
 
 
-import com.wincovid21.ingestion.entity.FeedbackType;
-import com.wincovid21.ingestion.repository.FeedbackTypesRepository;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
+import com.newrelic.api.agent.Trace;
+import com.wincovid21.ingestion.entity.FeedbackType;
+import com.wincovid21.ingestion.repository.FeedbackTypesRepository;
 import lombok.NonNull;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -43,14 +45,16 @@ public class FeedbackTypeCacheUtil {
                         feedbackTypeIterator.forEachRemaining(feedbackTypeList::add);
                         return feedbackTypeList;
                     }
-                    return new ArrayList<>();
+                    return Collections.emptyList();
                 });
     }
 
+    @Trace
     public List<FeedbackType> getFeedbackList() {
         return feedbackTypesList.get(FEEDBACK_TYPES_LIST);
     }
 
+    @Trace
     public void invalidateFeedbackListCache() {
         feedbackTypesList.invalidate(FEEDBACK_TYPES_LIST);
     }

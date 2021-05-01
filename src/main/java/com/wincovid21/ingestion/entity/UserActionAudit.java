@@ -20,7 +20,7 @@ public class UserActionAudit {
 
     @Column(name = "feedback_type")
     @Enumerated(EnumType.STRING)
-    private FeedbackType feedbackType;
+    private String feedbackType;
 
     @Column(name = "updated_on")
     private Date updatedOn;
