@@ -4,6 +4,12 @@
 
     <springProperty scope="context" name="LOG_PATH" source="logging.path" defaultValue="./"/>
 
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%date{dd-MM-yyyy;HH:mm:ss.SSS}|[%mdc{storeid}]|[%mdc{req}]|[%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
     <appender name="INFOLOGS" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>${LOG_PATH}/logs/coviingestion-info.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
