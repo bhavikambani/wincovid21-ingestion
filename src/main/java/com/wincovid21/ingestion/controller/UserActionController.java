@@ -5,7 +5,7 @@ import com.wincovid21.ingestion.domain.IngestionResponse;
 import com.wincovid21.ingestion.domain.UserActionDTO;
 import com.wincovid21.ingestion.entity.FeedbackType;
 import com.wincovid21.ingestion.service.UserActionServiceImpl;
-import com.wincovid21.ingestion.util.cache.FeedbackTypeCacheUtil;
+import com.wincovid21.ingestion.util.cache.CacheUtil;
 import lombok.NonNull;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
@@ -19,12 +19,12 @@ import java.util.List;
 @Controller("user-action")
 public class UserActionController {
 
-    private final FeedbackTypeCacheUtil feedbackTypeCacheUtil;
+    private final CacheUtil cacheUtil;
     private final UserActionServiceImpl userActionService;
 
-    public UserActionController(@NonNull final FeedbackTypeCacheUtil feedbackTypeCacheUtil,
+    public UserActionController(@NonNull final CacheUtil cacheUtil,
                                 @NonNull final UserActionServiceImpl userActionService) {
-        this.feedbackTypeCacheUtil = feedbackTypeCacheUtil;
+        this.cacheUtil = cacheUtil;
         this.userActionService = userActionService;
     }
 
@@ -41,10 +41,10 @@ public class UserActionController {
 
     }
 
-    @PutMapping("/inlidate/feedbacklist")
+    @PutMapping("/inlidate-cache/feedbacklist")
     @Trace
     public void invalidateFeedbackTypeCache() {
-        feedbackTypeCacheUtil.invalidateFeedbackListCache();
+        cacheUtil.invalidateFeedbackListCache();
     }
 
 }
