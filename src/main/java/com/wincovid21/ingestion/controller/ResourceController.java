@@ -7,6 +7,7 @@ import com.wincovid21.ingestion.util.cache.CacheUtil;
 import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -33,14 +34,28 @@ public class ResourceController {
 
     @Trace
     @GetMapping
-    public IngestionResponse<Map<Category, Set<Resource>>> availableResources() {
-        return IngestionResponse.<Map<Category, Set<Resource>>>builder().httpStatus(HttpStatus.OK).result(cacheUtil.getAvailableResources()).build();
+    public IngestionResponse<List<ResourceCategoryDetails>> availableResources() {
+        final Map<Category, Set<Resource>> availableResources = cacheUtil.getAvailableResources();
+        final List<ResourceCategoryDetails> resourceCategoryDetails = new ArrayList<>();
+
+        if (CollectionUtils.isEmpty(availableResources)) {
+            IngestionResponse.<List<ResourceCategoryDetails>>builder().httpStatus(HttpStatus.OK).result(resourceCategoryDetails).build();
+        }
+
+        availableResources.forEach((c, r) -> {
+            ResourceCategoryDetails resourceCategoryDetails1 = new ResourceCategoryDetails(c);
+            resourceCategoryDetails1.addResource(r);
+
+            resourceCategoryDetails.add(resourceCategoryDetails1);
+        });
+
+        return IngestionResponse.<List<ResourceCategoryDetails>>builder().httpStatus(HttpStatus.OK).result(resourceCategoryDetails).build();
     }
 
     @GetMapping("/city-states")
     @Trace
     public IngestionResponse<List<StateWiseConfiguredCities>> getStateCityDetails() {
-        final Map<StateDetails, Set<CityDetails>> stateCityDetails = cacheUtil.getStateCityDetails();
+        final Map<StateDetails, Set<CityDetails>> stateCityDetails = resourceService.getStateCityList();
         final List<StateWiseConfiguredCities> stateWiseConfiguredCities = new ArrayList<>();
         stateCityDetails.forEach((s, cities) -> {
             StateWiseConfiguredCities stateWiseConfiguredCity = new StateWiseConfiguredCities(s);

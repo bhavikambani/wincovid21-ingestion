@@ -67,7 +67,7 @@ public class CacheUtil {
         final CacheMetricsCollector cacheMetrics = new CacheMetricsCollector().register(meterRegistry);
         feedbackTypesList = Caffeine
                 .newBuilder()
-                .refreshAfterWrite(cacheConfig.getCacheInvalidateTimeSeconds(), TimeUnit.SECONDS)
+                .refreshAfterWrite(cacheConfig.getFeedbackTypeCacheInvalidationTTL(), TimeUnit.SECONDS)
                 .maximumSize(1000)
                 .recordStats()
                 .build(key -> {
@@ -84,7 +84,7 @@ public class CacheUtil {
 
         availableResources = Caffeine
                 .newBuilder()
-                .refreshAfterWrite(cacheConfig.getCacheInvalidateTimeSeconds(), TimeUnit.SECONDS)
+                .refreshAfterWrite(cacheConfig.getResourceListCacheInvalidationTTL(), TimeUnit.SECONDS)
                 .maximumSize(1000)
                 .recordStats()
                 .build(key -> {
@@ -135,7 +135,7 @@ public class CacheUtil {
 
         resourceStateCityDetails = Caffeine
                 .newBuilder()
-                .refreshAfterWrite(cacheConfig.getCacheInvalidateTimeSeconds(), TimeUnit.SECONDS)
+                .refreshAfterWrite(cacheConfig.getCityStateListCacheInvalidationTTL(), TimeUnit.SECONDS)
                 .maximumSize(100000)
                 .recordStats()
                 .build(key -> {

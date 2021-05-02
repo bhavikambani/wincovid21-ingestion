@@ -7,9 +7,17 @@ import org.springframework.stereotype.Component;
 @Component
 public class CacheConfig {
 
-    @Value("${cache.invalidate.time.seconds}")
+    @Value("${resource.list.cache.invalidate.ttl.seconds}")
     @Getter
-    private int cacheInvalidateTimeSeconds;
+    private int resourceListCacheInvalidationTTL;
+
+    @Value("${city.state.list.cache.invalidate.ttl.seconds}")
+    @Getter
+    private int cityStateListCacheInvalidationTTL;
+
+    @Value("${feedback.type.list.cache.invalidate.ttl.seconds}")
+    @Getter
+    private int feedbackTypeCacheInvalidationTTL;
 
 
 }
