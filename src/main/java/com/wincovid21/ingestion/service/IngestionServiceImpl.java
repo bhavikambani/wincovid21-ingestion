@@ -36,8 +36,8 @@ public class IngestionServiceImpl implements IngestionService {
     @Autowired
     private SearchClientHelper searchClientHelper;
 
-    private static final String createSpreadsheetId = "1JTbwbgzDle_3FiCTnex5FD1oeL47vmJoHYsELiC10a4";
-    private static final String updateSpreadsheetId = "1JTbwbgzDle_3FiCTnex5FD1oeL47vmJoHYsELiC10a4";
+    private static final String createSpreadsheetId = "1uDPale9WXyEXzbQta7C3oConQewjA36hbeYqVFtXxDs";
+    private static final String updateSpreadsheetId = "1uDPale9WXyEXzbQta7C3oConQewjA36hbeYqVFtXxDs";
     private static final String createRange = "master";
     private static final String updateRange = "master update";
     private static final Logger logger = LoggerFactory.getLogger(IngestionServiceImpl.class);
@@ -51,26 +51,30 @@ public class IngestionServiceImpl implements IngestionService {
                     .execute();
             for(int i=1;i<readResult.getValues().size();i++) {
                 List<Object> rowValue = readResult.getValues().get(i);
-                Long categoryId = resourceCategoryRepository.fetchCategoryIdForName(String.valueOf(rowValue.get(3))).getId();
-                Long resourceTypeId = resourceSubcategoryRepository.fetchResourceTypeIdForName(String.valueOf(rowValue.get(4))).getId();
-                ResourceDetails existingResource = resourceDetailsRepository.fetchResourceByPrimaryKey(String.valueOf(rowValue.get(6)),String.valueOf(rowValue.get(2)),resourceTypeId,categoryId);
-                if(Objects.nonNull(existingResource)) {
-                    logger.error("Exact entry already present across {} so create operation is invalid",rowValue);
+                ResourceCategory categoryId = resourceCategoryRepository.fetchCategoryIdForName(String.valueOf(rowValue.get(3)));
+                ResourceSubCategory resourceTypeId = resourceSubcategoryRepository.fetchResourceTypeIdForName(String.valueOf(rowValue.get(4)));
+                if(Objects.nonNull(categoryId) && Objects.nonNull(resourceTypeId)) {
+                    ResourceDetails existingResource = resourceDetailsRepository.fetchResourceByPrimaryKey(String.valueOf(rowValue.get(6)), String.valueOf(rowValue.get(2)), resourceTypeId.getId(), categoryId.getId());
+                    if (Objects.nonNull(existingResource)) {
+                        logger.error("Exact entry already present across {} so create operation is invalid", rowValue);
+                    } else {
+                        ResourceDetails resourceDetails = resourceDetailsUtil.convertToEntity(rowValue);
+                        if ((resourceDetails.getName().isEmpty() && resourceDetails.getPhone1().isEmpty()) || resourceDetails.getPhone1().isEmpty()) {
+                            logger.error("The phone number field is empty so dropping off the entry");
+                            continue;
+                        } else if (resourceDetails.getName().isEmpty()) {
+                            resourceDetails.setName(resourceDetails.getPhone1());
+                        }
+                        try {
+                            resourceDetails = resourceDetailsRepository.save(resourceDetails);
+                            ResourceRequestEntry resourceRequestEntry = resourceDetailsUtil.convertToRREntry(resourceDetails);
+                            searchClientHelper.makeHttpPostRequest(resourceRequestEntry);
+                        } catch (Exception e) {
+                            logger.error("Exception occurred so dropping current entry {}", e.getMessage());
+                        }
+                    }
                 } else {
-                    ResourceDetails resourceDetails = resourceDetailsUtil.convertToEntity(rowValue);
-                    if((resourceDetails.getName().isEmpty() && resourceDetails.getPhone1().isEmpty()) || resourceDetails.getPhone1().isEmpty()) {
-                        logger.error("The phone number field is empty so dropping off the entry");
-                        continue;
-                    } else if (resourceDetails.getName().isEmpty()) {
-                        resourceDetails.setName(resourceDetails.getPhone1());
-                    }
-                    try {
-                        resourceDetails = resourceDetailsRepository.save(resourceDetails);
-                        ResourceRequestEntry resourceRequestEntry = resourceDetailsUtil.convertToRREntry(resourceDetails);
-                        searchClientHelper.makeHttpPostRequest(resourceRequestEntry);
-                    } catch (Exception e) {
-                        logger.error("Exception occurred so dropping current entry {}",e.getMessage());
-                    }
+                    logger.error("No category or resource exists with such names");
                 }
             }
             return readResult.getValues().size();

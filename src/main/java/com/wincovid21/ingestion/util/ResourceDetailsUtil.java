@@ -62,15 +62,15 @@ public class ResourceDetailsUtil {
 
     public ResourceRequestEntry convertToRREntry(ResourceDetails resourceDetails) {
         ResourceRequestEntry resourceRequestEntry = new ResourceRequestEntry();
-        resourceRequestEntry.setCategory(resourceDetails.getCategory().getId());
+        resourceRequestEntry.setCategory(resourceDetails.getCategory().getCategoryName());
         resourceRequestEntry.setId(resourceDetails.getId().toString());
         resourceRequestEntry.setName(resourceDetails.getName());
         resourceRequestEntry.setAddress(resourceDetails.getAddress());
         resourceRequestEntry.setDescription(resourceDetails.getDescription());
         resourceRequestEntry.setEmail(resourceDetails.getEmail());
         resourceRequestEntry.setPincode(resourceDetails.getPinCode().toString());
-        resourceRequestEntry.setCity(resourceDetails.getCity().getId());
-        resourceRequestEntry.setState(resourceDetails.getState().getId());
+        resourceRequestEntry.setCity(resourceDetails.getCity().getCityName());
+        resourceRequestEntry.setState(resourceDetails.getState().getStateName());
         resourceRequestEntry.setPhone1(resourceDetails.getPhone1());
         resourceRequestEntry.setPhone2(resourceDetails.getPhone2());
         resourceRequestEntry.setVerified(resourceDetails.isVerified());
@@ -78,7 +78,11 @@ public class ResourceDetailsUtil {
         resourceRequestEntry.setUpdatedBy("");
         resourceRequestEntry.setCreatedBy(resourceDetails.getCreatedBy());
         resourceRequestEntry.setCreatedAt(resourceDetails.getCreatedOn().toString());
-        resourceRequestEntry.setSubcategory(resourceDetails.getResourceType().getId());
+        resourceRequestEntry.setSubcategory(resourceDetails.getResourceType().getSubCategoryName());
+        resourceRequestEntry.setCategoryId(resourceDetails.getCategory().getId());
+        resourceRequestEntry.setSubcategoryId(resourceDetails.getResourceType().getId());
+        resourceRequestEntry.setCityId(resourceDetails.getCity().getId());
+        resourceRequestEntry.setStateId(resourceDetails.getState().getId());
         if(AvailabilityType.AVAILABLE.getValue().equalsIgnoreCase(resourceDetails.getQuantityAvailable())) {
             resourceRequestEntry.setAvailable(true);
         } else {
