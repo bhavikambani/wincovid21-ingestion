@@ -45,7 +45,6 @@ create table re3source_sub_category (
 
 
 
-
 ---- Basic insert queries to setup DB
 insert into state_details (state_name, icon_path) values ("Maharastra", "abc.png");
 insert into state_details (state_name, icon_path) values ("Gujarat", "abc.png");
