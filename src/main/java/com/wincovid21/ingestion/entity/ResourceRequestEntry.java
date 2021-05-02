@@ -15,9 +15,13 @@ public class ResourceRequestEntry {
     @NonNull
     private String name;
     @NonNull
-    private Long category;
+    private String category;
     @NonNull
-    private Long subcategory;
+    private String subcategory;
+    @NonNull
+    private long categoryId;
+    @NonNull
+    private long subcategoryId;
     private String address;
     private String pincode;
     private String description;
@@ -26,9 +30,13 @@ public class ResourceRequestEntry {
     private String phone2;
     private String email;
     @NonNull
-    private Long city;
+    private String city;
     @NonNull
-    private Long state;
+    private String state;
+    @NonNull
+    private long cityId;
+    @NonNull
+    private long stateId;
     @NonNull
     private boolean isAvailable;
     private String createdBy;
