@@ -40,11 +40,13 @@ public class ResourceDetails {
     @Column(name = "email")
     private String email;
 
-    @Column(name = "city")
-    private Long city;
+    @ManyToOne
+    @JoinColumn(name = "city_id")
+    private City city;
 
-    @Column(name = "state")
-    private Long state;
+    @ManyToOne
+    @JoinColumn(name = "state_id")
+    private State state;
 
     @Column(name = "quantity_available")
     private String quantityAvailable;

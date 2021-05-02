@@ -5,9 +5,13 @@ import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import com.newrelic.api.agent.Trace;
 import com.wincovid21.ingestion.domain.ResourceStateCityDetails;
+import com.wincovid21.ingestion.entity.City;
 import com.wincovid21.ingestion.entity.FeedbackType;
+import com.wincovid21.ingestion.entity.State;
+import com.wincovid21.ingestion.repository.CityRepository;
 import com.wincovid21.ingestion.repository.FeedbackTypesRepository;
 import com.wincovid21.ingestion.repository.ResourceDetailsRepository;
+import com.wincovid21.ingestion.repository.StateRepository;
 import io.prometheus.client.CollectorRegistry;
 import io.prometheus.client.cache.caffeine.CacheMetricsCollector;
 import lombok.NonNull;
@@ -31,6 +35,8 @@ public class CacheUtil {
     private final CacheConfig cacheConfig;
     private final FeedbackTypesRepository feedbackTypesRepository;
     private final ResourceDetailsRepository resourceDetailsRepository;
+    private final StateRepository stateRepository;
+    private final CityRepository cityRepository;
     private final CollectorRegistry meterRegistry;
 
     // Cache Elements
@@ -41,11 +47,15 @@ public class CacheUtil {
     public CacheUtil(@NonNull final CacheConfig cacheConfig,
                      @NonNull final FeedbackTypesRepository feedbackTypesRepository,
                      @NonNull final CollectorRegistry meterRegistry,
-                     @NonNull final ResourceDetailsRepository resourceDetailsRepository) {
+                     @NonNull final ResourceDetailsRepository resourceDetailsRepository,
+                     @NonNull final StateRepository stateRepository,
+                     @NonNull final CityRepository cityRepository) {
         this.cacheConfig = cacheConfig;
         this.feedbackTypesRepository = feedbackTypesRepository;
         this.meterRegistry = meterRegistry;
         this.resourceDetailsRepository = resourceDetailsRepository;
+        this.stateRepository = stateRepository;
+        this.cityRepository = cityRepository;
     }
 
     @PostConstruct
@@ -92,7 +102,7 @@ public class CacheUtil {
 
                         final List<ResourceStateCityDetails> resourceStateCityDetailsList = new ArrayList<>();
                         List<Object[]> objects = resourceDetailsRepository.fetchStateCityDetails();
-                        Map<String, List<String>> stateCityDetails = new ConcurrentHashMap<>();
+                        Map<State, List<City>> stateCityDetails = new ConcurrentHashMap<>();
 
                         if (!(CollectionUtils.isEmpty(objects))) {
 
@@ -103,15 +113,21 @@ public class CacheUtil {
 
                             filteredNullObjects.forEach(elements -> {
                                 if (elements != null && elements.length == 2 && elements[0] != null && elements[1] != null) {
-                                    String state = elements[0].toString();
-                                    String city = elements[1].toString();
+                                    Long state = Long.parseLong(elements[0].toString());
+                                    Long city = Long.parseLong(elements[1].toString());
 
-                                    List<String> cities = stateCityDetails.get(state);
-                                    if (CollectionUtils.isEmpty(cities)) {
-                                        cities = Collections.synchronizedList(new ArrayList<>());
+                                    Optional<State> optionalState = stateRepository.findById(state);
+                                    Optional<City> optionalCity = cityRepository.findById(city);
+
+                                    if (optionalState.isPresent() && optionalCity.isPresent()) {
+
+                                        List<City> cities = stateCityDetails.get(optionalState.get());
+                                        if (CollectionUtils.isEmpty(cities)) {
+                                            cities = Collections.synchronizedList(new ArrayList<>());
+                                        }
+                                        cities.add(optionalCity.get());
+                                        stateCityDetails.put(optionalState.get(), cities);
                                     }
-                                    cities.add(city);
-                                    stateCityDetails.put(state, cities);
                                 }
                             });
                         }
