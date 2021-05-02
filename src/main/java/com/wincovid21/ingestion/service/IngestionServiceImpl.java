@@ -1,9 +1,13 @@
 package com.wincovid21.ingestion.service;
 
 import com.wincovid21.ingestion.client.SearchClientHelper;
+import com.wincovid21.ingestion.entity.ResourceCategory;
 import com.wincovid21.ingestion.entity.ResourceDetails;
 import com.wincovid21.ingestion.entity.ResourceRequestEntry;
+import com.wincovid21.ingestion.entity.ResourceSubCategory;
+import com.wincovid21.ingestion.repository.ResourceCategoryRepository;
 import com.wincovid21.ingestion.repository.ResourceDetailsRepository;
+import com.wincovid21.ingestion.repository.ResourceSubcategoryRepository;
 import com.wincovid21.ingestion.util.ResourceDetailsUtil;
 import com.wincovid21.ingestion.util.SheetsServiceUtil;
 import com.google.api.services.drive.Drive;
@@ -24,6 +28,10 @@ public class IngestionServiceImpl implements IngestionService {
     @Autowired
     private ResourceDetailsRepository resourceDetailsRepository;
     @Autowired
+    private ResourceCategoryRepository resourceCategoryRepository;
+    @Autowired
+    private ResourceSubcategoryRepository resourceSubcategoryRepository;
+    @Autowired
     private ResourceDetailsUtil resourceDetailsUtil;
     @Autowired
     private SearchClientHelper searchClientHelper;
@@ -41,7 +49,9 @@ public class IngestionServiceImpl implements IngestionService {
                     .execute();
             for(int i=1;i<readResult.getValues().size();i++) {
                 List<Object> rowValue = readResult.getValues().get(i);
-                ResourceDetails existingResource = resourceDetailsRepository.fetchResourceByPrimaryKey(String.valueOf(rowValue.get(6)),String.valueOf(rowValue.get(2)),String.valueOf(rowValue.get(4)),String.valueOf(rowValue.get(3)));
+                ResourceCategory categoryId = resourceCategoryRepository.fetchCategoryIdForName(String.valueOf(rowValue.get(3)));
+                ResourceSubCategory resourceTypeId = resourceSubcategoryRepository.fetchResourceTypeIdForName(String.valueOf(rowValue.get(4)));
+                ResourceDetails existingResource = resourceDetailsRepository.fetchResourceByPrimaryKey(String.valueOf(rowValue.get(6)),String.valueOf(rowValue.get(2)),resourceTypeId,categoryId);
                 if(Objects.nonNull(existingResource)) {
                     logger.error("Exact entry already present across {} so create operation is invalid",rowValue);
                 } else {
@@ -93,7 +103,9 @@ public class IngestionServiceImpl implements IngestionService {
                     .execute();
             for(int i=1;i<readResult.getValues().size();i++) {
                 List<Object> rowValue = readResult.getValues().get(i);
-                ResourceDetails existingResource = resourceDetailsRepository.fetchResourceByPrimaryKey(String.valueOf(rowValue.get(6)),String.valueOf(rowValue.get(2)),String.valueOf(rowValue.get(4)),String.valueOf(rowValue.get(3)));
+                ResourceCategory categoryId = resourceCategoryRepository.fetchCategoryIdForName(String.valueOf(rowValue.get(3)));
+                ResourceSubCategory resourceTypeId = resourceSubcategoryRepository.fetchResourceTypeIdForName(String.valueOf(rowValue.get(4)));
+                ResourceDetails existingResource = resourceDetailsRepository.fetchResourceByPrimaryKey(String.valueOf(rowValue.get(6)),String.valueOf(rowValue.get(2)),resourceTypeId,categoryId);
                 if(Objects.isNull(existingResource)) {
                    logger.error("No entry present across this row {} so cannot be an update operation", rowValue);
                 } else {

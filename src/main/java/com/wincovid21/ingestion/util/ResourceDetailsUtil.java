@@ -5,7 +5,7 @@ import com.wincovid21.ingestion.domain.VerificationType;
 import com.wincovid21.ingestion.entity.ResourceAvailabilityDetails;
 import com.wincovid21.ingestion.entity.ResourceDetails;
 import com.wincovid21.ingestion.entity.ResourceRequestEntry;
-import com.wincovid21.ingestion.repository.ResourceDetailsRepository;
+import com.wincovid21.ingestion.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
@@ -14,7 +14,14 @@ import java.util.List;
 public class ResourceDetailsUtil {
 
     @Autowired
-    private ResourceDetailsRepository resourceDetailsRepository;
+    private CityRepository cityRepository;
+    @Autowired
+    private StateRepository stateRepository;
+    @Autowired
+    private ResourceCategoryRepository resourceCategoryRepository;
+    @Autowired
+    private ResourceSubcategoryRepository resourceSubcategoryRepository;
+
 
     public ResourceDetails convertToEntity(List<Object> objectList) {
         ResourceDetails resourceDetails = new ResourceDetails();
@@ -55,15 +62,15 @@ public class ResourceDetailsUtil {
 
     public ResourceRequestEntry convertToRREntry(ResourceDetails resourceDetails) {
         ResourceRequestEntry resourceRequestEntry = new ResourceRequestEntry();
-        resourceRequestEntry.setCategory(resourceDetails.getCategory());
+        resourceRequestEntry.setCategory(resourceDetails.getCategory().getId());
         resourceRequestEntry.setId(resourceDetails.getId().toString());
         resourceRequestEntry.setName(resourceDetails.getName());
         resourceRequestEntry.setAddress(resourceDetails.getAddress());
         resourceRequestEntry.setDescription(resourceDetails.getDescription());
         resourceRequestEntry.setEmail(resourceDetails.getEmail());
         resourceRequestEntry.setPincode(resourceDetails.getPinCode().toString());
-        resourceRequestEntry.setCity(resourceDetails.getCity());
-        resourceRequestEntry.setState(resourceDetails.getState());
+        resourceRequestEntry.setCity(resourceDetails.getCity().getId());
+        resourceRequestEntry.setState(resourceDetails.getState().getId());
         resourceRequestEntry.setPhone1(resourceDetails.getPhone1());
         resourceRequestEntry.setPhone2(resourceDetails.getPhone2());
         resourceRequestEntry.setVerified(resourceDetails.isVerified());
@@ -71,7 +78,7 @@ public class ResourceDetailsUtil {
         resourceRequestEntry.setUpdatedBy("");
         resourceRequestEntry.setCreatedBy(resourceDetails.getCreatedBy());
         resourceRequestEntry.setCreatedAt(resourceDetails.getCreatedOn().toString());
-        resourceRequestEntry.setSubcategory(resourceDetails.getResourceType());
+        resourceRequestEntry.setSubcategory(resourceDetails.getResourceType().getId());
         if(AvailabilityType.AVAILABLE.getValue().equalsIgnoreCase(resourceDetails.getQuantityAvailable())) {
             resourceRequestEntry.setAvailable(true);
         } else {
@@ -107,10 +114,10 @@ public class ResourceDetailsUtil {
     }
 
     private ResourceDetails stampCategoryResourceCityState(List<Object> objectList,ResourceDetails resourceDetails) {
-        resourceDetails.setCategory(resourceDetailsRepository.fetchCategoryIdForName(String.valueOf(objectList.get(3))));
-        resourceDetails.setCategory(resourceDetailsRepository.fetchCategoryIdForName(String.valueOf(objectList.get(3))));
-        resourceDetails.setCategory(resourceDetailsRepository.fetchCategoryIdForName(String.valueOf(objectList.get(3))));
-        resourceDetails.setCategory(resourceDetailsRepository.fetchCategoryIdForName(String.valueOf(objectList.get(3))));
+        resourceDetails.setCategory(resourceCategoryRepository.fetchCategoryIdForName(String.valueOf(objectList.get(3))));
+        resourceDetails.setResourceType(resourceSubcategoryRepository.fetchResourceTypeIdForName(String.valueOf(objectList.get(4))));
+        resourceDetails.setCity(cityRepository.fetchCityIdForName(String.valueOf(objectList.get(9))));
+        resourceDetails.setState(stateRepository.fetchStateIdForName(String.valueOf(objectList.get(10))));
         return resourceDetails;
     }
 

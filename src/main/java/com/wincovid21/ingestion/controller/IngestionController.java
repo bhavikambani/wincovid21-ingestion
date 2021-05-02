@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/ingestion/sheet")
+@RequestMapping("/sheet")
 public class IngestionController {
 
     private final IngestionServiceImpl ingestionService;
@@ -22,20 +22,20 @@ public class IngestionController {
     @PostMapping(value = "/bulk/create")
     public ResponseEntity<String> resourceBulkCreate() {
         int rows = ingestionService.resourceBulkCreate();
-        return new ResponseEntity<>("Successfully created " + rows + " rows from the spreadsheet", HttpStatus.OK);
+        return new ResponseEntity<>("Successfully processed " + rows + " rows from the spreadsheet for creation", HttpStatus.OK);
     }
 
 
     @PutMapping(value = "/bulk/update")
     public ResponseEntity<String> resourceBulkUpdate() {
         int rows = ingestionService.resourceBulkUpdate();
-        return new ResponseEntity<>("Successfully updated " + rows + " rows from the spreadsheet", HttpStatus.OK);
+        return new ResponseEntity<>("Successfully processed " + rows + " rows from the spreadsheet for updation", HttpStatus.OK);
     }
 
     @GetMapping(value = "/lastupdate")
     public ResponseEntity<String> fetchSheetLastModifiedOn() {
         Long lastModifiedOn = ingestionService.fetchLastModifiedOn();
-        return new ResponseEntity<>("Successfully fetched lastmodifiedon from the spreadsheet " + lastModifiedOn , HttpStatus.OK);
+        return new ResponseEntity<>("Successfully fetched lastmodifiedon timestamp from the spreadsheet " + lastModifiedOn , HttpStatus.OK);
     }
 
 }

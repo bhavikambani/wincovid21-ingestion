@@ -1,6 +1,6 @@
 package com.wincovid21.ingestion.repository;
 
-import com.wincovid21.ingestion.entity.ResourceDetails;
+import com.wincovid21.ingestion.entity.*;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 
@@ -25,6 +25,6 @@ public interface ResourceDetailsRepository extends CrudRepository<ResourceDetail
     List<ResourceDetails> fetchResourceDetailsByPhone(String phoneNumber);
 
     @Query(value = "select rd from ResourceDetails rd where rd.phone1 = :phoneNumber and rd.resourceType = :resourceType and rd.name= :name and rd.category = :category")
-    ResourceDetails fetchResourceByPrimaryKey(String phoneNumber, String name, String resourceType, String category);
+    ResourceDetails fetchResourceByPrimaryKey(String phoneNumber, String name, ResourceSubCategory resourceType, ResourceCategory category);
 
 }

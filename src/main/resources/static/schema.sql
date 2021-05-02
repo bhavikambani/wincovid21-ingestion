@@ -28,7 +28,7 @@ create table resource_details (
 
 create table state_details (
 	`id` int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
-	`city_name` varchar(1024) NOT NULL,
+	`state_name` varchar(1024) NOT NULL,
 	`icon_path` varchar(1024) NOT NULL,
 	updated_on DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
@@ -52,7 +52,7 @@ create table resource_category (
 );
 
 
-create table re3source_sub_category (
+create table resource_sub_category (
 	`id` int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
 	`sub_category_name` varchar(1024) NOT NULL,
 	`category_id` int(11) NOT NULL,
