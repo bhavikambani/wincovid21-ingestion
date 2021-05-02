@@ -13,15 +13,17 @@ import java.util.List;
 @Repository
 public interface ResourceDetailsRepository extends CrudRepository<ResourceDetails, Long>, JpaSpecificationExecutor<ResourceDetails> {
 
-    @Query(value = "select distinct state, city  from ResourceDetails group by state, city ")
+    @Query(value = "select distinct state_id, city_id  from resource_details group by state_id, city_id ", nativeQuery = true)
     @Trace(async = true)
     List<Object[]> fetchStateCityDetails();
 
+    @Query(value = "select distinct category, resource_type  from resource_details group by category, resource_type ", nativeQuery = true)
+    @Trace(async = true)
+    List<Object[]> fetchCategoryResourceMapping();
 
     @Query(value = "select distinct resourceType  from ResourceDetails")
     @Trace(async = true)
     List<String> getDistinctResourceTypes();
-
 
     @Query(value = "select rd from ResourceDetails rd where rd.phone1 = :phoneNumber")
     List<ResourceDetails> fetchResourceDetailsByPhone(String phoneNumber);

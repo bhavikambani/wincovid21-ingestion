@@ -5,8 +5,8 @@ import lombok.Data;
 
 @Data
 @Builder
-public class CityDetails {
+public class Resource {
     private Long id;
-    private String cityName;
-    private String iconName;
+    private String resourceName;
+    private String icon;
 }
