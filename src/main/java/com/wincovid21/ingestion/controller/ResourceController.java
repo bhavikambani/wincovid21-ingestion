@@ -35,7 +35,7 @@ public class ResourceController {
     @Trace
     @GetMapping
     public IngestionResponse<List<ResourceCategoryDetails>> availableResources() {
-        final Map<Category, Set<Resource>> availableResources = cacheUtil.getAvailableResources();
+        final Map<Category, Set<Resource>> availableResources = resourceService.getAvailableResources();
         final List<ResourceCategoryDetails> resourceCategoryDetails = new ArrayList<>();
 
         if (CollectionUtils.isEmpty(availableResources)) {
