@@ -5,31 +5,26 @@ import com.wincovid21.ingestion.domain.IngestionResponse;
 import com.wincovid21.ingestion.domain.UserActionDTO;
 import com.wincovid21.ingestion.entity.FeedbackType;
 import com.wincovid21.ingestion.service.UserActionServiceImpl;
-import com.wincovid21.ingestion.util.cache.FeedbackTypeCacheUtil;
+import com.wincovid21.ingestion.util.cache.CacheUtil;
 import lombok.NonNull;
 import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Controller("user-action")
+@RestController("/user-action")
 public class UserActionController {
 
-    private final FeedbackTypeCacheUtil feedbackTypeCacheUtil;
+    private final CacheUtil cacheUtil;
     private final UserActionServiceImpl userActionService;
 
-    public UserActionController(@NonNull final FeedbackTypeCacheUtil feedbackTypeCacheUtil,
+    public UserActionController(@NonNull final CacheUtil cacheUtil,
                                 @NonNull final UserActionServiceImpl userActionService) {
-        this.feedbackTypeCacheUtil = feedbackTypeCacheUtil;
+        this.cacheUtil = cacheUtil;
         this.userActionService = userActionService;
     }
 
-
-    @PostMapping("feedback")
+    @PostMapping("/feedback")
     public IngestionResponse<Boolean> userFeedback(@RequestBody UserActionDTO userActionAudit) {
         userActionService.updateStatus(userActionService.toEntity(userActionAudit));
         return IngestionResponse.<Boolean>builder().result(true).httpStatus(HttpStatus.OK).build();
@@ -41,10 +36,9 @@ public class UserActionController {
 
     }
 
-    @PutMapping("/inlidate/feedbacklist")
+    @PutMapping("/inlidate-cache/feedbacklist")
     @Trace
     public void invalidateFeedbackTypeCache() {
-        feedbackTypeCacheUtil.invalidateFeedbackListCache();
+        cacheUtil.invalidateFeedbackListCache();
     }
-
 }

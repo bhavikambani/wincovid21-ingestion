@@ -17,10 +17,10 @@ public class ResourceDetails {
     private String name;
 
     @Column(name = "category")
-    private String category;
+    private Long category;
 
     @Column(name = "resource_type")
-    private String resourceType;
+    private Long resourceType;
 
     @Column(name = "address")
     private String address;
@@ -41,10 +41,10 @@ public class ResourceDetails {
     private String email;
 
     @Column(name = "city")
-    private String city;
+    private Long city;
 
     @Column(name = "state")
-    private String state;
+    private Long state;
 
     @Column(name = "quantity_available")
     private String quantityAvailable;
@@ -63,5 +63,5 @@ public class ResourceDetails {
 
     @Column(name = "is_verified")
     private boolean isVerified;
-
 }
+

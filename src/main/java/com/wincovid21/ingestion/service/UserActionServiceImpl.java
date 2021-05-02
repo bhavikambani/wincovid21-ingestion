@@ -5,7 +5,7 @@ import com.wincovid21.ingestion.domain.UserActionDTO;
 import com.wincovid21.ingestion.entity.FeedbackType;
 import com.wincovid21.ingestion.entity.UserActionAudit;
 import com.wincovid21.ingestion.repository.UserActionAuditRepository;
-import com.wincovid21.ingestion.util.cache.FeedbackTypeCacheUtil;
+import com.wincovid21.ingestion.util.cache.CacheUtil;
 import lombok.NonNull;
 import org.springframework.stereotype.Service;
 
@@ -16,13 +16,13 @@ import java.util.List;
 public class UserActionServiceImpl implements UserActionService {
 
     private final UserActionAuditRepository userActionAuditRepository;
-    private final FeedbackTypeCacheUtil feedbackTypeCacheUtil;
+    private final CacheUtil cacheUtil;
 
 
     public UserActionServiceImpl(@NonNull final UserActionAuditRepository userActionAuditRepository,
-                                 @NonNull final FeedbackTypeCacheUtil feedbackTypeCacheUtil) {
+                                 @NonNull final CacheUtil cacheUtil) {
         this.userActionAuditRepository = userActionAuditRepository;
-        this.feedbackTypeCacheUtil = feedbackTypeCacheUtil;
+        this.cacheUtil = cacheUtil;
     }
 
     @Override
@@ -34,10 +34,11 @@ public class UserActionServiceImpl implements UserActionService {
     @Override
     @Trace
     public List<FeedbackType> getFeedbackTypes() {
-        return feedbackTypeCacheUtil.getFeedbackList();
+        return cacheUtil.getFeedbackList();
     }
 
     @Override
+    @Trace
     public UserActionAudit toEntity(UserActionDTO userActionDTO) {
 
         UserActionAudit userActionAudit = new UserActionAudit();

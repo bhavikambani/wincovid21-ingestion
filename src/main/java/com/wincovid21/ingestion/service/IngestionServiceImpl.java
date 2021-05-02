@@ -55,7 +55,7 @@ public class IngestionServiceImpl implements IngestionService {
                     try {
                         resourceDetails = resourceDetailsRepository.save(resourceDetails);
                         ResourceRequestEntry resourceRequestEntry = resourceDetailsUtil.convertToRREntry(resourceDetails);
-//                        searchClientHelper.makeHttpPostRequest(resourceRequestEntry);
+                        searchClientHelper.makeHttpPostRequest(resourceRequestEntry);
                     } catch (Exception e) {
                         logger.error("Exception occurred so dropping current entry");
                     }
@@ -106,7 +106,7 @@ public class IngestionServiceImpl implements IngestionService {
                     }
                    existingResource = resourceDetailsRepository.save(existingResource);
                     ResourceRequestEntry resourceRequestEntry = resourceDetailsUtil.convertToRREntry(existingResource);
-                    //searchClientHelper.makeHttpPostRequest(resourceRequestEntry);
+                    searchClientHelper.makeHttpPostRequest(resourceRequestEntry);
                 }
             }
             return readResult.getValues().size();

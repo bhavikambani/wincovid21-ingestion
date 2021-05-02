@@ -20,7 +20,7 @@ import java.io.IOException;
 public class SearchClientHelper {
 
     private ObjectMapper objectMapper;
-    private static final String searchUrl = "";
+    private static final String searchUrl = "localhost:8081/upsert";
 
     public IngestionResponse makeHttpPostRequest(Object payload) throws IOException {
         HttpPost httpPost = new HttpPost(searchUrl);

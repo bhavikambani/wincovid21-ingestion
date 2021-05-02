@@ -5,14 +5,12 @@ import lombok.Data;
 
 import java.util.Date;
 
-@JsonIgnoreProperties(ignoreUnknown = true)
 @Data
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class UserActionDTO {
 
     private Long resourceId;
-
     private String feedbackType;
-
     private Date updatedOn;
 
 }
