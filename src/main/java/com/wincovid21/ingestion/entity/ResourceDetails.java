@@ -16,11 +16,13 @@ public class ResourceDetails {
     @Column(name = "name")
     private String name;
 
-    @Column(name = "category")
-    private Long category;
+    @ManyToOne
+    @JoinColumn(name = "category")
+    private ResourceCategory category;
 
-    @Column(name = "resource_type")
-    private Long resourceType;
+    @ManyToOne
+    @JoinColumn(name = "resource_type")
+    private ResourceSubCategory resourceType;
 
     @Column(name = "address")
     private String address;
@@ -60,7 +62,7 @@ public class ResourceDetails {
     @Column(name = "created_on")
     private Long createdOn;
 
-    @Column(name = "updated_on")
+    @Column(name = "updated_on", insertable = false, updatable = false)
     private Long updatedOn;
 
     @Column(name = "is_verified")
