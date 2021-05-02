@@ -9,7 +9,7 @@ create table resource_details (
     id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(1024) NOT NULL,
     address VARCHAR(1024),
-    category VARCHAR(120) NOT NULL,
+    category_id INT NOT NULL,
     resource_type VARCHAR(120) NOT NULL,
     pin_code BIGINT(12),
     description VARCHAR(1024),

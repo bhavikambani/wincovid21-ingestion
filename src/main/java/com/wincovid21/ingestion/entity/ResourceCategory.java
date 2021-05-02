@@ -1,6 +1,7 @@
 package com.wincovid21.ingestion.entity;
 
 import lombok.Data;
+import lombok.ToString;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -21,9 +22,11 @@ public class ResourceCategory {
     private String iconName;
 
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    @ToString.Exclude
     private List<ResourceSubCategory> subCategories;
 
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    @ToString.Exclude
     private List<ResourceDetails> resourceDetailsList;
 
 

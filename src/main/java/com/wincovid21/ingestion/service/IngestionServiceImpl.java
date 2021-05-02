@@ -51,8 +51,8 @@ public class IngestionServiceImpl implements IngestionService {
                     .execute();
             for(int i=1;i<readResult.getValues().size();i++) {
                 List<Object> rowValue = readResult.getValues().get(i);
-                ResourceCategory categoryId = resourceCategoryRepository.fetchCategoryIdForName(String.valueOf(rowValue.get(3)));
-                ResourceSubCategory resourceTypeId = resourceSubcategoryRepository.fetchResourceTypeIdForName(String.valueOf(rowValue.get(4)));
+                Long categoryId = resourceCategoryRepository.fetchCategoryIdForName(String.valueOf(rowValue.get(3))).getId();
+                Long resourceTypeId = resourceSubcategoryRepository.fetchResourceTypeIdForName(String.valueOf(rowValue.get(4))).getId();
                 ResourceDetails existingResource = resourceDetailsRepository.fetchResourceByPrimaryKey(String.valueOf(rowValue.get(6)),String.valueOf(rowValue.get(2)),resourceTypeId,categoryId);
                 if(Objects.nonNull(existingResource)) {
                     logger.error("Exact entry already present across {} so create operation is invalid",rowValue);
@@ -69,7 +69,7 @@ public class IngestionServiceImpl implements IngestionService {
                         ResourceRequestEntry resourceRequestEntry = resourceDetailsUtil.convertToRREntry(resourceDetails);
                         searchClientHelper.makeHttpPostRequest(resourceRequestEntry);
                     } catch (Exception e) {
-                        logger.error("Exception occurred so dropping current entry");
+                        logger.error("Exception occurred so dropping current entry {}",e.getMessage());
                     }
                 }
             }
@@ -104,8 +104,8 @@ public class IngestionServiceImpl implements IngestionService {
                     .execute();
             for(int i=1;i<readResult.getValues().size();i++) {
                 List<Object> rowValue = readResult.getValues().get(i);
-                ResourceCategory categoryId = resourceCategoryRepository.fetchCategoryIdForName(String.valueOf(rowValue.get(3)));
-                ResourceSubCategory resourceTypeId = resourceSubcategoryRepository.fetchResourceTypeIdForName(String.valueOf(rowValue.get(4)));
+                Long categoryId = resourceCategoryRepository.fetchCategoryIdForName(String.valueOf(rowValue.get(3))).getId();
+                Long resourceTypeId = resourceSubcategoryRepository.fetchResourceTypeIdForName(String.valueOf(rowValue.get(4))).getId();
                 ResourceDetails existingResource = resourceDetailsRepository.fetchResourceByPrimaryKey(String.valueOf(rowValue.get(6)),String.valueOf(rowValue.get(2)),resourceTypeId,categoryId);
                 if(Objects.isNull(existingResource)) {
                    logger.error("No entry present across this row {} so cannot be an update operation", rowValue);
@@ -117,9 +117,13 @@ public class IngestionServiceImpl implements IngestionService {
                     } else if (existingResource.getName().isEmpty()) {
                         existingResource.setName(existingResource.getPhone1());
                     }
-                   existingResource = resourceDetailsRepository.save(existingResource);
-                    ResourceRequestEntry resourceRequestEntry = resourceDetailsUtil.convertToRREntry(existingResource);
-                    searchClientHelper.makeHttpPostRequest(resourceRequestEntry);
+                    try {
+                        existingResource = resourceDetailsRepository.save(existingResource);
+                        ResourceRequestEntry resourceRequestEntry = resourceDetailsUtil.convertToRREntry(existingResource);
+                        searchClientHelper.makeHttpPostRequest(resourceRequestEntry);
+                    } catch (Exception e) {
+                    logger.error("Exception occurred so dropping current entry {}",e.getMessage());
+                }
                 }
             }
             return readResult.getValues().size();

@@ -1,6 +1,7 @@
 package com.wincovid21.ingestion.entity;
 
 import lombok.Data;
+import lombok.ToString;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -19,6 +20,7 @@ public class ResourceSubCategory {
 
     @ManyToOne
     @JoinColumn(name = "category_id")
+    @ToString.Exclude
     private ResourceCategory category;
 
     @Column(name = "icon_name", nullable = false)

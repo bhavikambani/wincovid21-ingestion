@@ -28,7 +28,7 @@ public interface ResourceDetailsRepository extends CrudRepository<ResourceDetail
     @Query(value = "select rd from ResourceDetails rd where rd.phone1 = :phoneNumber")
     List<ResourceDetails> fetchResourceDetailsByPhone(String phoneNumber);
 
-    @Query(value = "select rd from ResourceDetails rd where rd.phone1 = :phoneNumber and rd.resourceType = :resourceType and rd.name= :name and rd.category = :category")
-    ResourceDetails fetchResourceByPrimaryKey(String phoneNumber, String name, ResourceSubCategory resourceType, ResourceCategory category);
+    @Query(value = "select * from resource_details where phone_1 = :phoneNumber and resource_type = :resourceType and name= :name and category = :category", nativeQuery = true)
+    ResourceDetails fetchResourceByPrimaryKey(String phoneNumber, String name, Long resourceType, Long category);
 
 }
