@@ -14,6 +14,6 @@ public interface ResourceDetailsRepository extends JpaRepository<ResourceDetails
     @Query(value = "select rd from ResourceDetails rd where rd.phone1 = :phoneNumber")
     List<ResourceDetails>  fetchResourceDetailsByPhone(String phoneNumber);
 
-    @Query(value = "select rd from ResourceDetails rd where rd.phone1 = :phoneNumber and rd.resourceType = :resourceType and rd.name= :name")
-    ResourceDetails fetchResourceByPrimaryKey(String phoneNumber, String name, String resourceType);
+    @Query(value = "select rd from ResourceDetails rd where rd.phone1 = :phoneNumber and rd.resourceType = :resourceType and rd.name= :name and rd.category = :category")
+    ResourceDetails fetchResourceByPrimaryKey(String phoneNumber, String name, String resourceType, String category);
 }

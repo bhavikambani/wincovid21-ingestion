@@ -1,7 +1,6 @@
 package com.wincovid21.ingestion.controller;
 
 import com.wincovid21.ingestion.service.IngestionServiceImpl;
-import com.google.api.client.util.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -35,7 +34,7 @@ public class IngestionController {
 
     @GetMapping(value = "/lastupdate")
     public ResponseEntity<String> fetchSheetLastModifiedOn() {
-        DateTime lastModifiedOn = ingestionService.fetchLastModifiedOn();
+        Long lastModifiedOn = ingestionService.fetchLastModifiedOn();
         return new ResponseEntity<>("Successfully fetched lastmodifiedon from the spreadsheet " + lastModifiedOn , HttpStatus.OK);
     }
 

@@ -1,5 +1,6 @@
 package com.wincovid21.ingestion.util;
 
+import com.wincovid21.ingestion.domain.AvailabilityType;
 import com.wincovid21.ingestion.domain.VerificationType;
 import com.wincovid21.ingestion.entity.ResourceAvailabilityDetails;
 import com.wincovid21.ingestion.entity.ResourceDetails;
@@ -25,9 +26,9 @@ public class ResourceDetailsUtil {
         if (!objectList.get(12).toString().isEmpty())
             resourceDetails.setPinCode(Long.valueOf(objectList.get(12).toString()));
         if (!objectList.get(13).toString().isEmpty())
-            resourceDetails.setQuantityAvailable(Long.valueOf(objectList.get(13).toString()));
+            resourceDetails.setQuantityAvailable(objectList.get(13).toString());
         if (!objectList.get(14).toString().isEmpty())
-            resourceDetails.setPrice(Double.valueOf(objectList.get(14).toString()));
+            resourceDetails.setPrice(objectList.get(14).toString());
         resourceDetails.setCreatedBy(String.valueOf(objectList.get(16)));
         resourceDetails.setCreatedOn(System.currentTimeMillis());
         resourceDetails.setUpdatedOn(System.currentTimeMillis());
@@ -52,6 +53,7 @@ public class ResourceDetailsUtil {
 
     public ResourceRequestEntry convertToRREntry(ResourceDetails resourceDetails) {
         ResourceRequestEntry resourceRequestEntry = new ResourceRequestEntry();
+        resourceRequestEntry.setCategory(resourceDetails.getCategory());
         resourceRequestEntry.setId(resourceDetails.getId().toString());
         resourceRequestEntry.setName(resourceDetails.getName());
         resourceRequestEntry.setAddress(resourceDetails.getAddress());
@@ -64,7 +66,11 @@ public class ResourceDetailsUtil {
         resourceRequestEntry.setPhone2(resourceDetails.getPhone2());
         resourceRequestEntry.setVerified(resourceDetails.isVerified());
         resourceRequestEntry.setResourceType(resourceDetails.getResourceType());
-        resourceRequestEntry.setAvailable(true);
+        if(AvailabilityType.AVAILABLE.getValue().equalsIgnoreCase(resourceDetails.getQuantityAvailable())) {
+            resourceRequestEntry.setAvailable(true);
+        } else {
+            resourceRequestEntry.setAvailable(false);
+        }
         return  resourceRequestEntry;
     }
 
@@ -82,9 +88,9 @@ public class ResourceDetailsUtil {
         if (!objectList.get(12).toString().isEmpty())
             resourceDetails.setPinCode(Long.valueOf(objectList.get(12).toString()));
         if (!objectList.get(13).toString().isEmpty())
-            resourceDetails.setQuantityAvailable(Long.valueOf(objectList.get(13).toString()));
+            resourceDetails.setQuantityAvailable(objectList.get(13).toString());
         if (!objectList.get(14).toString().isEmpty())
-            resourceDetails.setPrice(Double.valueOf(objectList.get(14).toString()));
+            resourceDetails.setPrice(objectList.get(14).toString());
         resourceDetails.setUpdatedOn(System.currentTimeMillis());
         if (String.valueOf(objectList.get(20)).equalsIgnoreCase(VerificationType.VERIFIED_AND_DONOR_AVAILABLE.getValue()) ||
                 String.valueOf(objectList.get(20)).equalsIgnoreCase(VerificationType.VERIFIED_AND_STOCK_AVAILABLE.getValue()) ||

@@ -16,6 +16,7 @@ public class ResourceRequestEntry {
     private String phone1;
     private String phone2;
     private boolean isVerified;
+    private String category;
     private String resourceType;
     private boolean isAvailable;
     private String createdBy;

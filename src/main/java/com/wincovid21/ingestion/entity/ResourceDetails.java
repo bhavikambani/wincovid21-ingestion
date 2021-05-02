@@ -47,10 +47,10 @@ public class ResourceDetails {
     private String state;
 
     @Column(name = "quantity_available")
-    private Long quantityAvailable;
+    private String quantityAvailable;
 
     @Column(name = "price")
-    private Double price;
+    private String price;
 
     @Column(name = "created_by")
     private String createdBy;
