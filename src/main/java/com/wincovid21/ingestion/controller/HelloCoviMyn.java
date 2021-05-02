@@ -1,9 +1,6 @@
 package com.wincovid21.ingestion.controller;
 
-import com.wincovid21.ingestion.domain.CityDetails;
-import com.wincovid21.ingestion.domain.IngestionResponse;
-import com.wincovid21.ingestion.domain.StateDetails;
-import com.wincovid21.ingestion.domain.StateWiseConfiguredCities;
+import com.wincovid21.ingestion.domain.*;
 import com.wincovid21.ingestion.entity.FeedbackType;
 import com.wincovid21.ingestion.entity.UserActionAudit;
 import com.wincovid21.ingestion.repository.CityRepository;
@@ -44,7 +41,7 @@ public class HelloCoviMyn {
     }
 
     @GetMapping("/")
-    public IngestionResponse<List<StateWiseConfiguredCities>> sayHello() {
+    public IngestionResponse<List<ResourceCategoryDetails>> sayHello() {
         profiler.increment(ProfilerNames.HELLO_TOTAL);
         UserActionAudit userActionFlag = new UserActionAudit();
         userActionFlag.setResourceId(123L);
@@ -78,7 +75,18 @@ public class HelloCoviMyn {
             stateWiseConfiguredCities.add(stateWiseConfiguredCity);
         });
 
-        return IngestionResponse.<List<StateWiseConfiguredCities>>builder().httpStatus(HttpStatus.OK).result(stateWiseConfiguredCities).build();
+        Map<Category, Set<Resource>> availableResources = cacheUtil.getAvailableResources();
+
+        List<ResourceCategoryDetails> resourceCategoryDetails = new ArrayList<>();
+
+        availableResources.forEach((r, c) -> {
+            ResourceCategoryDetails resourceCategoryDetails1 = new ResourceCategoryDetails(r);
+            resourceCategoryDetails1.addResource(c);
+
+            resourceCategoryDetails.add(resourceCategoryDetails1);
+        });
+
+        return IngestionResponse.<List<ResourceCategoryDetails>>builder().httpStatus(HttpStatus.OK).result(resourceCategoryDetails).build();
     }
 
 }
