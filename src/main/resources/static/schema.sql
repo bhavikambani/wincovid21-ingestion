@@ -45,6 +45,25 @@ create table city_details (
   ON UPDATE CASCADE
 );
 
+create table resource_category (
+	`id` int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+	`category_name` varchar(1024) NOT NULL,
+	updated_on DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+
+create table re3source_sub_category (
+	`id` int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+	`sub_category_name` varchar(1024) NOT NULL,
+	`category_id` int(11) NOT NULL,
+	updated_on DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  CONSTRAINT FOREIGN KEY (category_id)
+  REFERENCES resource_category(id)
+  ON DELETE CASCADE
+  ON UPDATE CASCADE
+);
+
+
 
 
 

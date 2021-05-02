@@ -25,12 +25,14 @@ public class UserActionController {
     }
 
     @PostMapping("/feedback")
+    @Trace
     public IngestionResponse<Boolean> userFeedback(@RequestBody UserActionDTO userActionAudit) {
         userActionService.updateStatus(userActionService.toEntity(userActionAudit));
         return IngestionResponse.<Boolean>builder().result(true).httpStatus(HttpStatus.OK).build();
     }
 
     @GetMapping("/feedback-types")
+    @Trace
     public IngestionResponse<List<FeedbackType>> getFeedbackList() {
         return IngestionResponse.<List<FeedbackType>>builder().httpStatus(HttpStatus.OK).result(userActionService.getFeedbackTypes()).build();
 

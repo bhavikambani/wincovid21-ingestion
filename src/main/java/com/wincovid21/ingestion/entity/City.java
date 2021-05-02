@@ -26,7 +26,5 @@ public class City {
     @OneToMany(mappedBy = "city", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private List<ResourceDetails> resourceDetails;
 
-
-
 }
 

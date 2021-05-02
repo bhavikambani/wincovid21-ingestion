@@ -1,16 +1,24 @@
 package com.wincovid21.ingestion.controller;
 
 import com.newrelic.api.agent.Trace;
+import com.wincovid21.ingestion.domain.CityDetails;
 import com.wincovid21.ingestion.domain.IngestionResponse;
-import com.wincovid21.ingestion.domain.ResourceStateCityDetails;
+import com.wincovid21.ingestion.domain.StateDetails;
+import com.wincovid21.ingestion.domain.StateWiseConfiguredCities;
 import com.wincovid21.ingestion.service.ResourceService;
 import com.wincovid21.ingestion.util.cache.CacheUtil;
 import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/resource")
@@ -34,10 +42,18 @@ public class ResourceController {
 
     @GetMapping("/city-states")
     @Trace
-    public IngestionResponse<List<ResourceStateCityDetails>> getStateCityDetails() {
-        return IngestionResponse.<List<ResourceStateCityDetails>>builder().httpStatus(HttpStatus.OK).result(resourceService.getStateCityList()).build();
+    public IngestionResponse<List<StateWiseConfiguredCities>> getStateCityDetails() {
+        final Map<StateDetails, Set<CityDetails>> stateCityDetails = cacheUtil.getStateCityDetails();
+        final List<StateWiseConfiguredCities> stateWiseConfiguredCities = new ArrayList<>();
+        stateCityDetails.forEach((s, cities) -> {
+            StateWiseConfiguredCities stateWiseConfiguredCity = new StateWiseConfiguredCities(s);
+            stateWiseConfiguredCity.addCity(cities);
 
+            stateWiseConfiguredCities.add(stateWiseConfiguredCity);
+        });
+        return IngestionResponse.<List<StateWiseConfiguredCities>>builder().httpStatus(HttpStatus.OK).result(stateWiseConfiguredCities).build();
     }
+
 
     @DeleteMapping("/invalidate-cache")
     public HttpStatus invalidateCache() {
