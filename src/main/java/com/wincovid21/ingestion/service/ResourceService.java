@@ -8,4 +8,7 @@ import java.util.List;
 public interface ResourceService {
     @Trace
     List<ResourceStateCityDetails> getStateCityList();
+
+    @Trace
+    List<String> getAvailableResources();
 }

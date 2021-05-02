@@ -8,15 +8,11 @@ import com.wincovid21.ingestion.service.UserActionServiceImpl;
 import com.wincovid21.ingestion.util.cache.CacheUtil;
 import lombok.NonNull;
 import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Controller("user-action")
+@RestController("/user-action")
 public class UserActionController {
 
     private final CacheUtil cacheUtil;
@@ -28,8 +24,7 @@ public class UserActionController {
         this.userActionService = userActionService;
     }
 
-
-    @PostMapping("feedback")
+    @PostMapping("/feedback")
     public IngestionResponse<Boolean> userFeedback(@RequestBody UserActionDTO userActionAudit) {
         userActionService.updateStatus(userActionService.toEntity(userActionAudit));
         return IngestionResponse.<Boolean>builder().result(true).httpStatus(HttpStatus.OK).build();
@@ -46,5 +41,4 @@ public class UserActionController {
     public void invalidateFeedbackTypeCache() {
         cacheUtil.invalidateFeedbackListCache();
     }
-
 }

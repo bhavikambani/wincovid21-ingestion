@@ -6,22 +6,30 @@ import com.wincovid21.ingestion.domain.ResourceStateCityDetails;
 import com.wincovid21.ingestion.service.ResourceService;
 import com.wincovid21.ingestion.util.cache.CacheUtil;
 import lombok.NonNull;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Controller("resource")
+@RestController
+@RequestMapping("/resource")
 public class ResourceController {
 
     private final ResourceService resourceService;
     private final CacheUtil cacheUtil;
 
+    @Autowired
     public ResourceController(@NonNull final ResourceService resourceService,
                               @NonNull final CacheUtil cacheUtil) {
         this.resourceService = resourceService;
         this.cacheUtil = cacheUtil;
+    }
+
+    @Trace
+    @GetMapping
+    public IngestionResponse<List<String>> availableResources() {
+        return IngestionResponse.<List<String>>builder().httpStatus(HttpStatus.OK).result(cacheUtil.getAvailableResources()).build();
     }
 
     @GetMapping("/city-states")
@@ -31,7 +39,7 @@ public class ResourceController {
 
     }
 
-    @GetMapping("/invalidate-cache")
+    @DeleteMapping("/invalidate-cache")
     public HttpStatus invalidateCache() {
         cacheUtil.invalidateStateCityCache();
         return HttpStatus.OK;

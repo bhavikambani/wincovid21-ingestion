@@ -1,7 +1,6 @@
 package com.wincovid21.ingestion.controller;
 
 import com.wincovid21.ingestion.domain.IngestionResponse;
-import com.wincovid21.ingestion.domain.ResourceStateCityDetails;
 import com.wincovid21.ingestion.entity.FeedbackType;
 import com.wincovid21.ingestion.entity.UserActionAudit;
 import com.wincovid21.ingestion.repository.UserActionAuditRepository;
@@ -41,7 +40,7 @@ public class HelloCoviMyn {
     }
 
     @GetMapping("/")
-    public IngestionResponse<List<ResourceStateCityDetails>> sayHello() {
+    public IngestionResponse<List<String>> sayHello() {
         profiler.increment(ProfilerNames.HELLO_TOTAL);
         UserActionAudit userActionFlag = new UserActionAudit();
         userActionFlag.setResourceId(123L);
@@ -64,7 +63,7 @@ public class HelloCoviMyn {
 
         IngestionResponse.<List<Response>>builder().httpStatus(HttpStatus.OK).result(responses).build();
 
-        return IngestionResponse.<List<ResourceStateCityDetails>>builder().httpStatus(HttpStatus.OK).result(cacheUtil.getStateCityDetails()).build();
+        return IngestionResponse.<List<String>>builder().httpStatus(HttpStatus.OK).result(cacheUtil.getAvailableResources()).build();
     }
 
 

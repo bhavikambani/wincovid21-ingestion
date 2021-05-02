@@ -17,6 +17,12 @@ public interface ResourceDetailsRepository extends CrudRepository<ResourceDetail
     @Trace(async = true)
     List<Object[]> fetchStateCityDetails();
 
+
+    @Query(value = "select distinct resourceType  from ResourceDetails")
+    @Trace(async = true)
+    List<String> getDistinctResourceTypes();
+
+
     @Query(value = "select rd from ResourceDetails rd where rd.phone1 = :phoneNumber")
     List<ResourceDetails> fetchResourceDetailsByPhone(String phoneNumber);
 

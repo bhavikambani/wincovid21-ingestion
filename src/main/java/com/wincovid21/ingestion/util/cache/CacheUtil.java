@@ -26,6 +26,7 @@ import java.util.stream.Collectors;
 public class CacheUtil {
     private static final String FEEDBACK_TYPES_LIST = "FEEDBACK_TYPES_LIST";
     private static final String RESOURCE_CITY_STATE = "RESOURCE_STATE_CITY";
+    private static final String RESOURCE_LIST = "RESOURCE_LIST";
 
     private final CacheConfig cacheConfig;
     private final FeedbackTypesRepository feedbackTypesRepository;
@@ -35,6 +36,7 @@ public class CacheUtil {
     // Cache Elements
     private LoadingCache<String, List<FeedbackType>> feedbackTypesList;
     private LoadingCache<String, List<ResourceStateCityDetails>> resourceStateCityDetails;
+    private LoadingCache<String, List<String>> availableResources;
 
     public CacheUtil(@NonNull final CacheConfig cacheConfig,
                      @NonNull final FeedbackTypesRepository feedbackTypesRepository,
@@ -66,10 +68,23 @@ public class CacheUtil {
                     return Collections.emptyList();
                 });
 
-        resourceStateCityDetails = Caffeine
+        availableResources = Caffeine
                 .newBuilder()
                 .refreshAfterWrite(cacheConfig.getCacheInvalidateTimeSeconds(), TimeUnit.SECONDS)
                 .maximumSize(1000)
+                .recordStats()
+                .build(key -> {
+                    cacheMetrics.addCache(RESOURCE_LIST, availableResources);
+                    if (RESOURCE_LIST.equals(key)) {
+                        return resourceDetailsRepository.getDistinctResourceTypes();
+                    }
+                    return Collections.emptyList();
+                });
+
+        resourceStateCityDetails = Caffeine
+                .newBuilder()
+                .refreshAfterWrite(cacheConfig.getCacheInvalidateTimeSeconds(), TimeUnit.SECONDS)
+                .maximumSize(100000)
                 .recordStats()
                 .build(key -> {
                     cacheMetrics.addCache(RESOURCE_CITY_STATE, resourceStateCityDetails);
@@ -136,6 +151,11 @@ public class CacheUtil {
     public void invalidateStateCityCache() {
         log.info("Invalidating cache # {}", RESOURCE_CITY_STATE);
         feedbackTypesList.invalidate(RESOURCE_CITY_STATE);
+    }
+
+    @Trace
+    public List<String> getAvailableResources() {
+        return availableResources.get(RESOURCE_LIST);
     }
 
 }

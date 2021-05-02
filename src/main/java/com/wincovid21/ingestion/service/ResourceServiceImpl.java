@@ -22,4 +22,9 @@ public class ResourceServiceImpl implements ResourceService {
     public List<ResourceStateCityDetails> getStateCityList() {
         return cacheUtil.getStateCityDetails();
     }
+
+    @Override
+    public List<String> getAvailableResources() {
+        return cacheUtil.getAvailableResources();
+    }
 }
