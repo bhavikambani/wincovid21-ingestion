@@ -7,7 +7,7 @@ import java.util.Date;
 import java.util.List;
 
 @Entity
-@Table(name = "resource_category")
+@Table(name = "resource_sub_category")
 @Data
 public class ResourceSubCategory {
     @Id
@@ -20,6 +20,9 @@ public class ResourceSubCategory {
     @ManyToOne
     @JoinColumn(name = "category_id")
     private ResourceCategory category;
+
+    @Column(name = "icon_name", nullable = false)
+    private String iconName;
 
     @OneToMany(mappedBy = "resourceType", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private List<ResourceDetails> resourceDetailsList;

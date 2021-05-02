@@ -31,7 +31,7 @@ create table resource_category (
 );
 
 
-create table re3source_sub_category (
+create table resource_sub_category (
 	`id` int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
 	`sub_category_name` varchar(1024) NOT NULL,
 	`category_id` int(11) NOT NULL,

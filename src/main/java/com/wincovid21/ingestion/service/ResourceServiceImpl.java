@@ -1,13 +1,14 @@
 package com.wincovid21.ingestion.service;
 
 import com.newrelic.api.agent.Trace;
+import com.wincovid21.ingestion.domain.Category;
 import com.wincovid21.ingestion.domain.CityDetails;
+import com.wincovid21.ingestion.domain.Resource;
 import com.wincovid21.ingestion.domain.StateDetails;
 import com.wincovid21.ingestion.util.cache.CacheUtil;
 import lombok.NonNull;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -27,7 +28,7 @@ public class ResourceServiceImpl implements ResourceService {
     }
 
     @Override
-    public List<String> getAvailableResources() {
+    public Map<Category, Set<Resource>> getAvailableResources() {
         return cacheUtil.getAvailableResources();
     }
 }

@@ -14,8 +14,11 @@ public class ResourceCategory {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @Column(name = "category_name")
+    @Column(name = "category_name", nullable = false)
     private String categoryName;
+
+    @Column(name = "icon_name", nullable = false)
+    private String iconName;
 
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private List<ResourceSubCategory> subCategories;

@@ -17,6 +17,10 @@ public interface ResourceDetailsRepository extends CrudRepository<ResourceDetail
     @Trace(async = true)
     List<Object[]> fetchStateCityDetails();
 
+    @Query(value = "select distinct category, resource_type  from resource_details group by category, resource_type ", nativeQuery = true)
+    @Trace(async = true)
+    List<Object[]> fetchCategoryResourceMapping();
+
     @Query(value = "select distinct resourceType  from ResourceDetails")
     @Trace(async = true)
     List<String> getDistinctResourceTypes();

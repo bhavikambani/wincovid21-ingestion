@@ -1,10 +1,7 @@
 package com.wincovid21.ingestion.controller;
 
 import com.newrelic.api.agent.Trace;
-import com.wincovid21.ingestion.domain.CityDetails;
-import com.wincovid21.ingestion.domain.IngestionResponse;
-import com.wincovid21.ingestion.domain.StateDetails;
-import com.wincovid21.ingestion.domain.StateWiseConfiguredCities;
+import com.wincovid21.ingestion.domain.*;
 import com.wincovid21.ingestion.service.ResourceService;
 import com.wincovid21.ingestion.util.cache.CacheUtil;
 import lombok.NonNull;
@@ -36,8 +33,8 @@ public class ResourceController {
 
     @Trace
     @GetMapping
-    public IngestionResponse<List<String>> availableResources() {
-        return IngestionResponse.<List<String>>builder().httpStatus(HttpStatus.OK).result(cacheUtil.getAvailableResources()).build();
+    public IngestionResponse<Map<Category, Set<Resource>>> availableResources() {
+        return IngestionResponse.<Map<Category, Set<Resource>>>builder().httpStatus(HttpStatus.OK).result(cacheUtil.getAvailableResources()).build();
     }
 
     @GetMapping("/city-states")
