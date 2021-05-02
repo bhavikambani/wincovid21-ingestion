@@ -36,16 +36,18 @@ public class IngestionServiceImpl implements IngestionService {
     @Autowired
     private SearchClientHelper searchClientHelper;
 
-    private static final String createSpreadsheetId = "1uDPale9WXyEXzbQta7C3oConQewjA36hbeYqVFtXxDs";
+    private static final String createSpreadsheetId = "1JTbwbgzDle_3FiCTnex5FD1oeL47vmJoHYsELiC10a4";
+    private static final String updateSpreadsheetId = "1JTbwbgzDle_3FiCTnex5FD1oeL47vmJoHYsELiC10a4";
+    private static final String createRange = "master";
+    private static final String updateRange = "master update";
     private static final Logger logger = LoggerFactory.getLogger(IngestionServiceImpl.class);
 
     @Override
     public int resourceBulkCreate() {
         try {
             Sheets sheetsService = sheetsServiceUtil.getSheetsService();
-            String range = "master";
             ValueRange readResult = sheetsService.spreadsheets().values()
-                    .get(createSpreadsheetId,range)
+                    .get(createSpreadsheetId,createRange)
                     .execute();
             for(int i=1;i<readResult.getValues().size();i++) {
                 List<Object> rowValue = readResult.getValues().get(i);
@@ -97,9 +99,8 @@ public class IngestionServiceImpl implements IngestionService {
     public int resourceBulkUpdate() {
         try {
             Sheets sheetsService = sheetsServiceUtil.getSheetsService();
-            String range = "master update";
             ValueRange readResult = sheetsService.spreadsheets().values()
-                    .get(createSpreadsheetId,range)
+                    .get(updateSpreadsheetId,updateRange)
                     .execute();
             for(int i=1;i<readResult.getValues().size();i++) {
                 List<Object> rowValue = readResult.getValues().get(i);
