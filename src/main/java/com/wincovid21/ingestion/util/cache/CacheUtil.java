@@ -4,7 +4,8 @@ package com.wincovid21.ingestion.util.cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import com.newrelic.api.agent.Trace;
-import com.wincovid21.ingestion.domain.ResourceStateCityDetails;
+import com.wincovid21.ingestion.domain.CityDetails;
+import com.wincovid21.ingestion.domain.StateDetails;
 import com.wincovid21.ingestion.entity.City;
 import com.wincovid21.ingestion.entity.FeedbackType;
 import com.wincovid21.ingestion.entity.State;
@@ -41,7 +42,7 @@ public class CacheUtil {
 
     // Cache Elements
     private LoadingCache<String, List<FeedbackType>> feedbackTypesList;
-    private LoadingCache<String, List<ResourceStateCityDetails>> resourceStateCityDetails;
+    private LoadingCache<String, Map<StateDetails, Set<CityDetails>>> resourceStateCityDetails;
     private LoadingCache<String, List<String>> availableResources;
 
     public CacheUtil(@NonNull final CacheConfig cacheConfig,
@@ -100,7 +101,7 @@ public class CacheUtil {
                     cacheMetrics.addCache(RESOURCE_CITY_STATE, resourceStateCityDetails);
                     if (RESOURCE_CITY_STATE.equals(key)) {
 
-                        final List<ResourceStateCityDetails> resourceStateCityDetailsList = new ArrayList<>();
+                        final Map<StateDetails, Set<CityDetails>> resourceStateCityDetailsList = new ConcurrentHashMap<>();
                         List<Object[]> objects = resourceDetailsRepository.fetchStateCityDetails();
                         Map<State, List<City>> stateCityDetails = new ConcurrentHashMap<>();
 
@@ -133,22 +134,19 @@ public class CacheUtil {
                         }
 
                         stateCityDetails.forEach((state, cities) -> {
-                            ResourceStateCityDetails resourceStateCityDetails = new ResourceStateCityDetails();
-                            resourceStateCityDetails.setState(state);
-
-                            cities.forEach(resourceStateCityDetails::addCity);
-
-                            resourceStateCityDetailsList.add(resourceStateCityDetails);
+                            StateDetails stateDetail = StateDetails.builder().id(state.getId()).iconName(state.getIconPath()).stateName(state.getStateName()).build();
+                            Set<CityDetails> cityDetails = cities.stream().map(c -> CityDetails.builder().id(c.getId()).cityName(c.getCityName()).iconName(c.getIconPath()).build()).collect(Collectors.toSet());
+                            resourceStateCityDetailsList.put(stateDetail, cityDetails);
 
                         });
                         return resourceStateCityDetailsList;
                     }
-                    return Collections.emptyList();
+                    return Collections.emptyMap();
                 });
     }
 
     @Trace
-    public List<ResourceStateCityDetails> getStateCityDetails() {
+    public Map<StateDetails, Set<CityDetails>> getStateCityDetails() {
         return resourceStateCityDetails.get(RESOURCE_CITY_STATE);
     }
 
