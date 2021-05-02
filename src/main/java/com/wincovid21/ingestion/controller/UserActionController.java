@@ -12,7 +12,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RestController("/user-action")
+@RestController
+@RequestMapping("/user-action")
 public class UserActionController {
 
     private final CacheUtil cacheUtil;
