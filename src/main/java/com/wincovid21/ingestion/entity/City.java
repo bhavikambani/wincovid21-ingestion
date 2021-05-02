@@ -1,6 +1,7 @@
 package com.wincovid21.ingestion.entity;
 
 import lombok.Data;
+import lombok.ToString;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -22,9 +23,11 @@ public class City {
 
     @ManyToOne
     @JoinColumn(name = "state_id")
+    @ToString.Exclude
     private State state;
 
     @OneToMany(mappedBy = "city", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    @ToString.Exclude
     private List<ResourceDetails> resourceDetails;
 
     @Column(name = "updated_on", insertable = false, updatable = false)

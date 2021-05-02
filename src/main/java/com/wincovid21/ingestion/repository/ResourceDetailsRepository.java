@@ -1,10 +1,10 @@
 package com.wincovid21.ingestion.repository;
 
-
-import com.newrelic.api.agent.Trace;
-import com.wincovid21.ingestion.entity.ResourceDetails;
+import com.wincovid21.ingestion.entity.*;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
+
+import com.newrelic.api.agent.Trace;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
@@ -28,6 +28,7 @@ public interface ResourceDetailsRepository extends CrudRepository<ResourceDetail
     @Query(value = "select rd from ResourceDetails rd where rd.phone1 = :phoneNumber")
     List<ResourceDetails> fetchResourceDetailsByPhone(String phoneNumber);
 
-    @Query(value = "select rd from ResourceDetails rd where rd.phone1 = :phoneNumber and rd.resourceType = :resourceType and rd.name= :name")
-    ResourceDetails fetchResourceByPrimaryKey(String phoneNumber, String name, String resourceType);
+    @Query(value = "select * from resource_details where phone_1 = :phoneNumber and resource_type = :resourceType and name= :name and category = :category", nativeQuery = true)
+    ResourceDetails fetchResourceByPrimaryKey(String phoneNumber, String name, Long resourceType, Long category);
+
 }

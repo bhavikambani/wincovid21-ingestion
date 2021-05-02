@@ -1,6 +1,7 @@
 package com.wincovid21.ingestion.entity;
 
 import lombok.Data;
+import lombok.ToString;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -21,9 +22,11 @@ public class State {
     private String iconPath;
 
     @OneToMany(mappedBy = "state", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    @ToString.Exclude
     private List<City> cities;
 
     @OneToMany(mappedBy = "state", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    @ToString.Exclude
     private List<ResourceDetails> resourceDetails;
 
     @Column(name = "updated_on", insertable = false, updatable = false)

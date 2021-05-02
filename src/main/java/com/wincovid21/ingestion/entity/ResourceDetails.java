@@ -1,9 +1,10 @@
 package com.wincovid21.ingestion.entity;
 
-
 import lombok.Data;
+import lombok.ToString;
 
 import javax.persistence.*;
+import java.lang.annotation.Native;
 
 @Entity
 @Table(name = "resource_details")
@@ -17,12 +18,14 @@ public class ResourceDetails {
     @Column(name = "name")
     private String name;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "category")
+    @ToString.Exclude
     private ResourceCategory category;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "resource_type")
+    @ToString.Exclude
     private ResourceSubCategory resourceType;
 
     @Column(name = "address")
@@ -43,19 +46,21 @@ public class ResourceDetails {
     @Column(name = "email")
     private String email;
 
-    @ManyToOne
-    @JoinColumn(name = "city_id")
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "city")
+    @ToString.Exclude
     private City city;
 
-    @ManyToOne
-    @JoinColumn(name = "state_id")
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "state")
+    @ToString.Exclude
     private State state;
 
     @Column(name = "quantity_available")
-    private Long quantityAvailable;
+    private String quantityAvailable;
 
     @Column(name = "price")
-    private Double price;
+    private String price;
 
     @Column(name = "created_by")
     private String createdBy;
@@ -68,5 +73,5 @@ public class ResourceDetails {
 
     @Column(name = "is_verified")
     private boolean isVerified;
-
 }
+
