@@ -150,7 +150,7 @@ public class CacheUtil {
                 .build(key -> {
                     if (RESOURCE_CITY_STATE.equals(key)) {
 
-                        final Map<StateDetails, Set<CityDetails>> resourceStateCityDetailsList = new ConcurrentHashMap<>();
+                        final Map<StateDetails, Set<CityDetails>> resourceStateCityDetailsList = new TreeMap<>();
                         List<Object[]> objects = resourceDetailsRepository.fetchStateCityDetails();
                         Map<State, List<City>> stateCityDetails = new ConcurrentHashMap<>();
 
@@ -188,7 +188,7 @@ public class CacheUtil {
                                 CityDetails cityDetails = CityDetails.builder().id(c.getId()).cityName(c.getCityName()).iconName(c.getIconPath()).build();
                                 Set<CityDetails> existingResources = resourceStateCityDetailsList.get(stateDetail);
                                 if (CollectionUtils.isEmpty(existingResources)) {
-                                    existingResources = Collections.synchronizedSet(new HashSet<>());
+                                    existingResources = Collections.synchronizedSet(new TreeSet<>());
                                 }
                                 existingResources.add(cityDetails);
                                 resourceStateCityDetailsList.put(stateDetail, existingResources);

@@ -5,8 +5,13 @@ import lombok.Data;
 
 @Data
 @Builder
-public class CityDetails {
+public class CityDetails implements Comparable<CityDetails> {
     private Long id;
     private String cityName;
     private String iconName;
+
+    @Override
+    public int compareTo(CityDetails o) {
+        return o.cityName.compareTo(this.cityName);
+    }
 }
