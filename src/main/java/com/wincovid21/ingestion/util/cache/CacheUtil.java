@@ -105,6 +105,7 @@ public class CacheUtil {
                                 if (elements != null && elements.length == 2 && elements[0] != null && elements[1] != null) {
                                     Long category = Long.parseLong(elements[0].toString());
                                     Long resourceType = Long.parseLong(elements[1].toString());
+                                    log.info("Iterating Types from DB | Category # {}, resource # {}", category, resourceType);
 
                                     Optional<ResourceCategory> optionalResourceCategory = resourceCategoryRepository.findById(category);
                                     Optional<ResourceSubCategory> optionalResourceSubCategory = resourceSubcategoryRepository.findById(resourceType);
@@ -115,7 +116,7 @@ public class CacheUtil {
                                         if (CollectionUtils.isEmpty(resourceSubCategories)) {
                                             resourceSubCategories = Collections.synchronizedSet(new HashSet<>());
                                         }
-                                        log.info("Iterating Category # {}, resource # {}", optionalResourceCategory.get(), optionalResourceSubCategory.get());
+                                        log.info("Iterating Category Entity # {}, resource # {}", optionalResourceCategory.get().getCategoryName(), optionalResourceSubCategory.get().getSubCategoryName());
                                         resourceSubCategories.add(optionalResourceSubCategory.get());
                                         resourceCategoryListConcurrentHashMap.put(optionalResourceCategory.get(), resourceSubCategories);
                                     }
@@ -127,7 +128,7 @@ public class CacheUtil {
                             Category categoryDetail = Category.builder().id(category.getId()).icon(category.getIconName()).categoryName(category.getCategoryName()).build();
                             Set<Resource> resourceDetails = resources.stream().map(c -> Resource.builder().id(c.getId()).resourceName(c.getSubCategoryName()).icon(c.getIconName()).build()).collect(Collectors.toSet());
                             resourceCategorySetMap.put(categoryDetail, resourceDetails);
-                            log.info("Iterating Category # {}, resource # {}", categoryDetail, resourceDetails);
+                            log.info("Iterating Category # {}, resource # {}", categoryDetail, resourceDetails.stream().map(Resource::getResourceName).collect(Collectors.toList()));
 
                         });
                         return resourceCategorySetMap;
