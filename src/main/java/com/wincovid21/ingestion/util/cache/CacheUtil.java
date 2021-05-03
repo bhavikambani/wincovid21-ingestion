@@ -115,6 +115,7 @@ public class CacheUtil {
                                         if (CollectionUtils.isEmpty(resourceSubCategories)) {
                                             resourceSubCategories = Collections.synchronizedSet(new HashSet<>());
                                         }
+                                        log.info("Iterating Category # {}, resource # {}", optionalResourceCategory.get(), optionalResourceSubCategory.get());
                                         resourceSubCategories.add(optionalResourceSubCategory.get());
                                         resourceCategoryListConcurrentHashMap.put(optionalResourceCategory.get(), resourceSubCategories);
                                     }
@@ -122,10 +123,11 @@ public class CacheUtil {
                             });
                         }
 
-                        resourceCategoryListConcurrentHashMap.forEach((category, cities) -> {
-                            Category stateDetail = Category.builder().id(category.getId()).icon(category.getIconName()).categoryName(category.getCategoryName()).build();
-                            Set<Resource> cityDetails = cities.stream().map(c -> Resource.builder().id(c.getId()).resourceName(c.getSubCategoryName()).icon(c.getIconName()).build()).collect(Collectors.toSet());
-                            resourceCategorySetMap.put(stateDetail, cityDetails);
+                        resourceCategoryListConcurrentHashMap.forEach((category, resources) -> {
+                            Category categoryDetail = Category.builder().id(category.getId()).icon(category.getIconName()).categoryName(category.getCategoryName()).build();
+                            Set<Resource> resourceDetails = resources.stream().map(c -> Resource.builder().id(c.getId()).resourceName(c.getSubCategoryName()).icon(c.getIconName()).build()).collect(Collectors.toSet());
+                            resourceCategorySetMap.put(categoryDetail, resourceDetails);
+                            log.info("Iterating Category # {}, resource # {}", categoryDetail, resourceDetails);
 
                         });
                         return resourceCategorySetMap;

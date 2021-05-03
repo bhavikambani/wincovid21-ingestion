@@ -65,6 +65,7 @@ create table resource_sub_category (
 
 
 
+insert into resource_category (category_name, icon_name) values  ('Oxygen', 'Oxygen');
 insert into resource_category (category_name, icon_name) values  ('hospital', 'Bed');
 insert into resource_category (category_name, icon_name) values  ('medicine', 'Injection');
 insert into resource_category (category_name, icon_name) values  ('Medical Support', 'Ambulance');
