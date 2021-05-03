@@ -12,5 +12,6 @@ public class UserActionDTO {
     private Long resourceId;
     private String feedbackType;
     private Date updatedOn;
+    private String token;
 
 }
