@@ -1,5 +1,9 @@
 package com.wincovid21.ingestion.service;
 
+import com.google.api.services.drive.Drive;
+import com.google.api.services.drive.model.File;
+import com.google.api.services.sheets.v4.Sheets;
+import com.google.api.services.sheets.v4.model.ValueRange;
 import com.wincovid21.ingestion.client.SearchClientHelper;
 import com.wincovid21.ingestion.entity.ResourceCategory;
 import com.wincovid21.ingestion.entity.ResourceDetails;
@@ -10,10 +14,6 @@ import com.wincovid21.ingestion.repository.ResourceDetailsRepository;
 import com.wincovid21.ingestion.repository.ResourceSubcategoryRepository;
 import com.wincovid21.ingestion.util.ResourceDetailsUtil;
 import com.wincovid21.ingestion.util.SheetsServiceUtil;
-import com.google.api.services.drive.Drive;
-import com.google.api.services.drive.model.File;
-import com.google.api.services.sheets.v4.Sheets;
-import com.google.api.services.sheets.v4.model.ValueRange;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,13 +47,13 @@ public class IngestionServiceImpl implements IngestionService {
         try {
             Sheets sheetsService = sheetsServiceUtil.getSheetsService();
             ValueRange readResult = sheetsService.spreadsheets().values()
-                    .get(createSpreadsheetId,createRange)
+                    .get(createSpreadsheetId, createRange)
                     .execute();
-            for(int i=1;i<readResult.getValues().size();i++) {
+            for (int i = 1; i < readResult.getValues().size(); i++) {
                 List<Object> rowValue = readResult.getValues().get(i);
                 ResourceCategory categoryId = resourceCategoryRepository.fetchCategoryIdForName(String.valueOf(rowValue.get(3)));
                 ResourceSubCategory resourceTypeId = resourceSubcategoryRepository.fetchResourceTypeIdForName(String.valueOf(rowValue.get(4)));
-                if(Objects.nonNull(categoryId) && Objects.nonNull(resourceTypeId)) {
+                if (Objects.nonNull(categoryId) && Objects.nonNull(resourceTypeId)) {
                     ResourceDetails existingResource = resourceDetailsRepository.fetchResourceByPrimaryKey(String.valueOf(rowValue.get(6)), String.valueOf(rowValue.get(2)), resourceTypeId.getId(), categoryId.getId());
                     if (Objects.nonNull(existingResource)) {
                         logger.error("Exact entry already present across {} so create operation is invalid", rowValue);
@@ -70,7 +70,7 @@ public class IngestionServiceImpl implements IngestionService {
                             ResourceRequestEntry resourceRequestEntry = resourceDetailsUtil.convertToRREntry(resourceDetails);
                             searchClientHelper.makeHttpPostRequest(resourceRequestEntry);
                         } catch (Exception e) {
-                            logger.error("Exception occurred so dropping current entry {}", e.getMessage());
+                            logger.error("Exception occurred so dropping current entry", e);
                         }
                     }
                 } else {
@@ -79,7 +79,7 @@ public class IngestionServiceImpl implements IngestionService {
             }
             return readResult.getValues().size();
         } catch (Exception e) {
-            logger.error("Exception occurred due to {}", e);
+            logger.error("Exception occurred due to.", e);
             return 0;
         }
     }
@@ -104,18 +104,18 @@ public class IngestionServiceImpl implements IngestionService {
         try {
             Sheets sheetsService = sheetsServiceUtil.getSheetsService();
             ValueRange readResult = sheetsService.spreadsheets().values()
-                    .get(updateSpreadsheetId,updateRange)
+                    .get(updateSpreadsheetId, updateRange)
                     .execute();
-            for(int i=1;i<readResult.getValues().size();i++) {
+            for (int i = 1; i < readResult.getValues().size(); i++) {
                 List<Object> rowValue = readResult.getValues().get(i);
                 Long categoryId = resourceCategoryRepository.fetchCategoryIdForName(String.valueOf(rowValue.get(3))).getId();
                 Long resourceTypeId = resourceSubcategoryRepository.fetchResourceTypeIdForName(String.valueOf(rowValue.get(4))).getId();
-                ResourceDetails existingResource = resourceDetailsRepository.fetchResourceByPrimaryKey(String.valueOf(rowValue.get(6)),String.valueOf(rowValue.get(2)),resourceTypeId,categoryId);
-                if(Objects.isNull(existingResource)) {
-                   logger.error("No entry present across this row {} so cannot be an update operation", rowValue);
+                ResourceDetails existingResource = resourceDetailsRepository.fetchResourceByPrimaryKey(String.valueOf(rowValue.get(6)), String.valueOf(rowValue.get(2)), resourceTypeId, categoryId);
+                if (Objects.isNull(existingResource)) {
+                    logger.error("No entry present across this row {} so cannot be an update operation", rowValue);
                 } else {
-                   existingResource = resourceDetailsUtil.updateEntity(rowValue,existingResource);
-                    if((existingResource.getName().isEmpty() && existingResource.getPhone1().isEmpty()) || existingResource.getPhone1().isEmpty()) {
+                    existingResource = resourceDetailsUtil.updateEntity(rowValue, existingResource);
+                    if ((existingResource.getName().isEmpty() && existingResource.getPhone1().isEmpty()) || existingResource.getPhone1().isEmpty()) {
                         logger.error("The phone number field is empty so dropping off the entry");
                         continue;
                     } else if (existingResource.getName().isEmpty()) {
@@ -126,13 +126,13 @@ public class IngestionServiceImpl implements IngestionService {
                         ResourceRequestEntry resourceRequestEntry = resourceDetailsUtil.convertToRREntry(existingResource);
                         searchClientHelper.makeHttpPostRequest(resourceRequestEntry);
                     } catch (Exception e) {
-                    logger.error("Exception occurred so dropping current entry {}",e.getMessage());
-                }
+                        logger.error("Exception occurred so dropping current entry", e);
+                    }
                 }
             }
             return readResult.getValues().size();
         } catch (Exception e) {
-            logger.error("Exception occurred due to {}", e);
+            logger.error("Exception occurred due to ", e);
             return 0;
         }
     }
