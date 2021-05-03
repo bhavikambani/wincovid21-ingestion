@@ -9,6 +9,7 @@ import com.wincovid21.ingestion.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
+import java.util.Objects;
 
 
 public class ResourceDetailsUtil {
@@ -68,7 +69,9 @@ public class ResourceDetailsUtil {
         resourceRequestEntry.setAddress(resourceDetails.getAddress());
         resourceRequestEntry.setDescription(resourceDetails.getDescription());
         resourceRequestEntry.setEmail(resourceDetails.getEmail());
-        resourceRequestEntry.setPincode(resourceDetails.getPinCode().toString());
+        if(Objects.nonNull(resourceDetails.getPinCode())) {
+            resourceRequestEntry.setPincode(resourceDetails.getPinCode().toString());
+        }
         resourceRequestEntry.setCity(resourceDetails.getCity().getCityName());
         resourceRequestEntry.setState(resourceDetails.getState().getStateName());
         resourceRequestEntry.setPhone1(resourceDetails.getPhone1());
