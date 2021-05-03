@@ -36,8 +36,8 @@ public class IngestionServiceImpl implements IngestionService {
     @Autowired
     private SearchClientHelper searchClientHelper;
 
-    private static final String createSpreadsheetId = "1U1Hq5i8fSW2jeev3xcratIoOEOoJX5AjOQ0on57CR80";
-    private static final String updateSpreadsheetId = "1U1Hq5i8fSW2jeev3xcratIoOEOoJX5AjOQ0on57CR80";
+    private static final String createSpreadsheetId = "1JTbwbgzDle_3FiCTnex5FD1oeL47vmJoHYsELiC10a4";
+    private static final String updateSpreadsheetId = "1JTbwbgzDle_3FiCTnex5FD1oeL47vmJoHYsELiC10a4";
     private static final String createRange = "master";
     private static final String updateRange = "master update";
     private static final Logger logger = LoggerFactory.getLogger(IngestionServiceImpl.class);
@@ -51,6 +51,10 @@ public class IngestionServiceImpl implements IngestionService {
                     .execute();
             for (int i = 1; i < readResult.getValues().size(); i++) {
                 List<Object> rowValue = readResult.getValues().get(i);
+                if(String.valueOf(rowValue.get(3)).isEmpty() || String.valueOf(rowValue.get(4)).isEmpty() || String.valueOf(rowValue.get(6)).isEmpty() || String.valueOf(rowValue.get(9)).isEmpty() || String.valueOf(rowValue.get(10)).isEmpty()) {
+                    logger.error("Discarding the row as one or more of mandatory fields are missing.");
+                    continue;
+                }
                 ResourceCategory categoryId = resourceCategoryRepository.fetchCategoryIdForName(String.valueOf(rowValue.get(3)));
                 ResourceSubCategory resourceTypeId = resourceSubcategoryRepository.fetchResourceTypeIdForName(String.valueOf(rowValue.get(4)));
                 if (Objects.nonNull(categoryId) && Objects.nonNull(resourceTypeId)) {
@@ -108,6 +112,10 @@ public class IngestionServiceImpl implements IngestionService {
                     .execute();
             for (int i = 1; i < readResult.getValues().size(); i++) {
                 List<Object> rowValue = readResult.getValues().get(i);
+                if(String.valueOf(rowValue.get(3)).isEmpty() || String.valueOf(rowValue.get(4)).isEmpty() || String.valueOf(rowValue.get(6)).isEmpty() || String.valueOf(rowValue.get(9)).isEmpty() || String.valueOf(rowValue.get(10)).isEmpty()) {
+                    logger.error("Discarding the row as one or more of mandatory fields are missing.");
+                    continue;
+                }
                 Long categoryId = resourceCategoryRepository.fetchCategoryIdForName(String.valueOf(rowValue.get(3))).getId();
                 Long resourceTypeId = resourceSubcategoryRepository.fetchResourceTypeIdForName(String.valueOf(rowValue.get(4))).getId();
                 ResourceDetails existingResource = resourceDetailsRepository.fetchResourceByPrimaryKey(String.valueOf(rowValue.get(6)), String.valueOf(rowValue.get(2)), resourceTypeId, categoryId);

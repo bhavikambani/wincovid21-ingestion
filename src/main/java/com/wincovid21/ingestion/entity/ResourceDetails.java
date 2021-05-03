@@ -68,7 +68,7 @@ public class ResourceDetails {
     @Column(name = "created_on")
     private Long createdOn;
 
-    @Column(name = "updated_on", insertable = false, updatable = false)
+    @Column(name = "updated_on")
     private Long updatedOn;
 
     @Column(name = "is_verified")
