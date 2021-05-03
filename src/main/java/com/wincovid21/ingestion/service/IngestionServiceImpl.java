@@ -36,8 +36,8 @@ public class IngestionServiceImpl implements IngestionService {
     @Autowired
     private SearchClientHelper searchClientHelper;
 
-    private static final String createSpreadsheetId = "1uDPale9WXyEXzbQta7C3oConQewjA36hbeYqVFtXxDs";
-    private static final String updateSpreadsheetId = "1uDPale9WXyEXzbQta7C3oConQewjA36hbeYqVFtXxDs";
+    private static final String createSpreadsheetId = "1U1Hq5i8fSW2jeev3xcratIoOEOoJX5AjOQ0on57CR80";
+    private static final String updateSpreadsheetId = "1U1Hq5i8fSW2jeev3xcratIoOEOoJX5AjOQ0on57CR80";
     private static final String createRange = "master";
     private static final String updateRange = "master update";
     private static final Logger logger = LoggerFactory.getLogger(IngestionServiceImpl.class);
@@ -70,7 +70,7 @@ public class IngestionServiceImpl implements IngestionService {
                             ResourceRequestEntry resourceRequestEntry = resourceDetailsUtil.convertToRREntry(resourceDetails);
                             searchClientHelper.makeHttpPostRequest(resourceRequestEntry);
                         } catch (Exception e) {
-                            logger.error("Exception occurred so dropping current entry {}", e.getMessage());
+                            logger.error("Exception occurred so dropping current entry {}", e.getMessage(),e);
                         }
                     }
                 } else {
