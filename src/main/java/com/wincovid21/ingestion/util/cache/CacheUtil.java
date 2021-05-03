@@ -184,9 +184,16 @@ public class CacheUtil {
 
                         stateCityDetails.forEach((state, cities) -> {
                             StateDetails stateDetail = StateDetails.builder().id(state.getId()).iconName(state.getIconPath()).stateName(state.getStateName()).build();
-                            Set<CityDetails> cityDetails = cities.stream().map(c -> CityDetails.builder().id(c.getId()).cityName(c.getCityName()).iconName(c.getIconPath()).build()).collect(Collectors.toSet());
-                            resourceStateCityDetailsList.put(stateDetail, cityDetails);
-
+                            cities.forEach(c -> {
+                                CityDetails cityDetails = CityDetails.builder().id(c.getId()).cityName(c.getCityName()).iconName(c.getIconPath()).build();
+                                Set<CityDetails> existingResources = resourceStateCityDetailsList.get(stateDetail);
+                                if (CollectionUtils.isEmpty(existingResources)) {
+                                    existingResources = Collections.synchronizedSet(new HashSet<>());
+                                }
+                                existingResources.add(cityDetails);
+                                resourceStateCityDetailsList.put(stateDetail, existingResources);
+                            });
+                            log.info("Iterating Category # {}, resource # {}", stateDetail, resourceStateCityDetailsList.get(stateDetail).stream().map(CityDetails::getCityName).collect(Collectors.toList()));
                         });
                         return resourceStateCityDetailsList;
                     }
