@@ -38,8 +38,9 @@ public class UserActionController {
 
     @PostMapping("/feedback")
     @Trace
-    public IngestionResponse<Boolean> userFeedback(@RequestBody UserActionDTO userActionAudit) {
-        userActionService.updateStatus(userActionService.toEntity(userActionAudit));
+    public IngestionResponse<Boolean> userFeedback(@RequestBody UserActionDTO userActionAudit,
+                                                   final @RequestHeader(value = "covid-at", required = false) String authToken) throws UnAuthorizedUserException {
+        userActionService.updateStatus(userActionService.toEntity(userActionAudit), authToken);
         return IngestionResponse.<Boolean>builder().result(true).httpStatus(HttpStatus.OK).build();
     }
 

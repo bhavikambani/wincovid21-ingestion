@@ -5,6 +5,7 @@ import com.wincovid21.ingestion.domain.UserActionDTO;
 import com.wincovid21.ingestion.domain.VerificationType;
 import com.wincovid21.ingestion.entity.FeedbackType;
 import com.wincovid21.ingestion.entity.UserActionAudit;
+import com.wincovid21.ingestion.exception.UnAuthorizedUserException;
 import com.wincovid21.ingestion.repository.UserActionAuditRepository;
 import com.wincovid21.ingestion.service.user.UserAuthService;
 import com.wincovid21.ingestion.util.cache.CacheUtil;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -27,21 +29,40 @@ public class UserActionServiceImpl implements UserActionService {
     private final UserActionAuditRepository userActionAuditRepository;
     private final CacheUtil cacheUtil;
     private final UserAuthService userAuthService;
-
+    private final ResourceService resourceService;
 
     public UserActionServiceImpl(@NonNull final UserActionAuditRepository userActionAuditRepository,
                                  @NonNull final CacheUtil cacheUtil,
-                                 @NonNull final UserAuthService userAuthService) {
+                                 @NonNull final UserAuthService userAuthService,
+                                 @NonNull final ResourceService resourceService) {
         this.userActionAuditRepository = userActionAuditRepository;
         this.cacheUtil = cacheUtil;
         this.userAuthService = userAuthService;
+        this.resourceService = resourceService;
     }
 
     @Override
     @Trace
-    public void updateStatus(@NonNull UserActionAudit userActionAudit) {
+    public void updateStatus(@NonNull UserActionAudit userActionAudit, String authToken) throws UnAuthorizedUserException, IOException {
+        final Set<String> approvalEnums = Arrays.stream(VerificationType.values()).map(VerificationType::getValue).collect(Collectors.toSet());
+
         userActionAuditRepository.save(userActionAudit);
+        if (!CollectionUtils.isEmpty(approvalEnums)) {
+            if (approvalEnums.contains(userActionAudit.getFeedbackType()))
+                if (userAuthService.isAuthorised(authToken)) {
+                    resourceService.updateWithVerified(userActionAudit.getResourceId(), userActionAudit.getFeedbackType());
+                } else {
+                    throw new UnAuthorizedUserException("User is not Authorised to perform this action");
+                }
+        } else {
+            if (cacheUtil.getFeedbackList().stream().map(FeedbackType::getFeedbackMessage).collect(Collectors.toList()).contains(userActionAudit.getFeedbackType())) {
+                resourceService.updateWithUnVerified(userActionAudit.getResourceId(), userActionAudit.getFeedbackType());
+            } else {
+                throw new UnAuthorizedUserException("Invalid Action Performed");
+            }
+        }
     }
+
 
     @Override
     @Trace
