@@ -44,7 +44,7 @@ public class UserActionController {
         try {
             log.info("Feedback request # {}, auth @ {}", userActionAudit, authToken);
             userActionService.updateStatus(userActionService.toEntity(userActionAudit), authToken);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(false);
+            return ResponseEntity.status(HttpStatus.OK).body(true);
         } catch (UnAuthorizedUserException ue) {
             log.error("UnAuthorised user action # {}.", userActionAudit, ue);
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(false);
