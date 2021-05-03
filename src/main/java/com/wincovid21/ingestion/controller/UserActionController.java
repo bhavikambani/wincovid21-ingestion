@@ -51,6 +51,9 @@ public class UserActionController {
         } catch (IOException e) {
             log.error("UnAuthorised user action # {}.", userActionAudit, e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(false);
+        } catch (Exception e) {
+            log.error("Exception user action # {}.", userActionAudit, e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(false);
         }
     }
 
