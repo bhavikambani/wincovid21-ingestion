@@ -65,6 +65,40 @@ create table resource_sub_category (
 
 
 
+insert into resource_category (category_name, icon_name) values  ('hospital', 'Bed');
+insert into resource_category (category_name, icon_name) values  ('medicine', 'Injection');
+insert into resource_category (category_name, icon_name) values  ('Medical Support', 'Ambulance');
+
+
+insert into resource_sub_category (sub_category_name, category_id, icon_name) values ('refill', 1 , 'icon1');
+insert into resource_sub_category (sub_category_name, category_id, icon_name) values ('cylinder', 1 , 'icon1');
+insert into resource_sub_category (sub_category_name, category_id, icon_name) values ('concentrator', 1 , 'icon1');
+insert into resource_sub_category (sub_category_name, category_id, icon_name) values ('cannula kits', 1 , 'icon1');
+
+
+insert into resource_sub_category (sub_category_name, category_id, icon_name) values ('accepts_covid', 5, 'icon1');
+
+
+insert into resource_sub_category (sub_category_name, category_id, icon_name) values ('Remdesivir', 6 , 'icon1');
+insert into resource_sub_category (sub_category_name, category_id, icon_name) values ('Fabiflu', 6 , 'icon1');
+insert into resource_sub_category (sub_category_name, category_id, icon_name) values ('Favipiravir', 6 , 'icon1');
+insert into resource_sub_category (sub_category_name, category_id, icon_name) values ('Tocilizumab', 6 , 'icon1');
+insert into resource_sub_category (sub_category_name, category_id, icon_name) values ('Bevacizumab', 6 , 'icon1');
+
+insert into resource_sub_category (sub_category_name, category_id, icon_name) values ('Fever Clinic ', 7 , 'icon1');
+insert into resource_sub_category (sub_category_name, category_id, icon_name) values ('Doctors', 7 , 'icon1');
+insert into resource_sub_category (sub_category_name, category_id, icon_name) values ('Pharmacies', 7 , 'icon1');
+
+
+
+insert into feedback_types (feedback_code, feedback_message) values ('C1', 'Verified and Donor Available');
+insert into feedback_types (feedback_code, feedback_message) values ('C2', 'Verified and Stock Available');
+insert into feedback_types (feedback_code, feedback_message) values ('C3', 'Verified but Donor Unavailable');
+insert into feedback_types (feedback_code, feedback_message) values ('C4', 'Verified but Stock Unavailable');
+insert into feedback_types (feedback_code, feedback_message) values ('C5', 'Unverified');
+insert into feedback_types (feedback_code, feedback_message) values ('C6', 'Pending');
+insert into feedback_types (feedback_code, feedback_message) values ('C7', 'Invalid Number');
+
 
 ---- Basic insert queries to setup DB
 insert into state_details (state_name, icon_path) values ("Maharastra", "abc.png");
