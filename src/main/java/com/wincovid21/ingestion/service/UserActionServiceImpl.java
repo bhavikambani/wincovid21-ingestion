@@ -45,9 +45,12 @@ public class UserActionServiceImpl implements UserActionService {
     @Trace
     public void updateStatus(@NonNull UserActionAudit userActionAudit, String authToken) throws UnAuthorizedUserException, IOException {
         final Set<String> approvalEnums = Arrays.stream(VerificationType.values()).map(VerificationType::getValue).collect(Collectors.toSet());
+        log.info("userActionAudit # {}, auth # {}", userActionAudit, authToken);
 
         userActionAuditRepository.save(userActionAudit);
+        log.info("After Update # {}, auth # {}", userActionAudit, authToken);
         if (!CollectionUtils.isEmpty(approvalEnums)) {
+            log.info("Enums is not empty");
             if (approvalEnums.contains(userActionAudit.getFeedbackType()))
                 if (userAuthService.isAuthorised(authToken)) {
                     resourceService.updateWithVerified(userActionAudit.getResourceId(), userActionAudit.getFeedbackType());
