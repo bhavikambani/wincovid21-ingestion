@@ -64,7 +64,7 @@ public class UserActionController {
                     .message("Un Authorised Action Performed")
                     .user(loginRequest.getUser())
                     .build();
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
         } catch (Exception t) {
             log.error("Exception while authenticating # {}.", loginRequest, t);
             LoginResponse response = LoginResponse.builder()
