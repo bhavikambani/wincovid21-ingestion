@@ -44,14 +44,14 @@ public class ResourceController {
             IngestionResponse.<List<ResourceCategoryDetails>>builder().httpStatus(HttpStatus.OK).result(resourceCategoryDetails).build();
         }
 
-        log.info("availableResources # {}", availableResources);
+        log.info("availableResources from Cache# {}", availableResources);
         availableResources.forEach((c, r) -> {
             ResourceCategoryDetails resourceCategoryDetails1 = new ResourceCategoryDetails(c);
             resourceCategoryDetails1.addResource(r);
 
             resourceCategoryDetails.add(resourceCategoryDetails1);
         });
-        log.info("availableResources # {}", resourceCategoryDetails);
+        log.info("availableResources Response # {}", resourceCategoryDetails);
         return IngestionResponse.<List<ResourceCategoryDetails>>builder().httpStatus(HttpStatus.OK).result(resourceCategoryDetails).build();
     }
 
