@@ -88,8 +88,8 @@ public class CacheUtil {
                 .maximumSize(1000)
                 .recordStats()
                 .build(key -> {
-                    cacheMetrics.addCache(RESOURCE_LIST, availableResources);
                     if (RESOURCE_LIST.equals(key)) {
+                        log.info("Loading Cache.");
                         final Map<Category, Set<Resource>> resourceCategorySetMap = new ConcurrentHashMap<>();
                         final List<Object[]> categoryResourceMapping = resourceDetailsRepository.fetchCategoryResourceMapping();
                         Map<ResourceCategory, Set<ResourceSubCategory>> resourceCategoryListConcurrentHashMap = new ConcurrentHashMap<>();
@@ -126,23 +126,28 @@ public class CacheUtil {
 
                         resourceCategoryListConcurrentHashMap.forEach((category, resources) -> {
                             Category categoryDetail = Category.builder().id(category.getId()).icon(category.getIconName()).categoryName(category.getCategoryName()).build();
-                            Set<Resource> resourceDetails = resources.stream().map(c -> Resource.builder().id(c.getId()).resourceName(c.getSubCategoryName()).icon(c.getIconName()).build()).collect(Collectors.toSet());
-                            resourceCategorySetMap.put(categoryDetail, resourceDetails);
-                            log.info("Iterating Category # {}, resource # {}", categoryDetail, resourceDetails.stream().map(Resource::getResourceName).collect(Collectors.toList()));
-
+                            resources.forEach(c -> {
+                                Resource resource = Resource.builder().id(c.getId()).resourceName(c.getSubCategoryName()).icon(c.getIconName()).build();
+                                Set<Resource> existingResources = resourceCategorySetMap.get(categoryDetail);
+                                if (CollectionUtils.isEmpty(existingResources)) {
+                                    existingResources = Collections.synchronizedSet(new HashSet<>());
+                                }
+                                existingResources.add(resource);
+                                resourceCategorySetMap.put(categoryDetail, existingResources);
+                            });
+                            log.info("Iterating Category # {}, resource # {}", categoryDetail, resourceCategorySetMap.get(categoryDetail).stream().map(Resource::getResourceName).collect(Collectors.toList()));
                         });
                         return resourceCategorySetMap;
                     }
                     return Collections.emptyMap();
                 });
-
+        cacheMetrics.addCache(RESOURCE_LIST, availableResources);
         resourceStateCityDetails = Caffeine
                 .newBuilder()
                 .refreshAfterWrite(cacheConfig.getCityStateListCacheInvalidationTTL(), TimeUnit.SECONDS)
                 .maximumSize(100000)
                 .recordStats()
                 .build(key -> {
-                    cacheMetrics.addCache(RESOURCE_CITY_STATE, resourceStateCityDetails);
                     if (RESOURCE_CITY_STATE.equals(key)) {
 
                         final Map<StateDetails, Set<CityDetails>> resourceStateCityDetailsList = new ConcurrentHashMap<>();
@@ -187,6 +192,7 @@ public class CacheUtil {
                     }
                     return Collections.emptyMap();
                 });
+        cacheMetrics.addCache(RESOURCE_CITY_STATE, resourceStateCityDetails);
     }
 
     @Trace
