@@ -23,7 +23,7 @@ public class SearchClientHelper {
     private ObjectMapper objectMapper;
     private static final String searchUrl = "http://search.wincovid21.in/wincovid21-search-service/upsert";
 
-    public IngestionResponse makeHttpPostRequest(ResourceRequestEntry resourceRequestEntry) throws IOException {
+    public IngestionResponse<HttpEntity> makeHttpPostRequest(ResourceRequestEntry resourceRequestEntry) throws IOException {
         HttpPost httpPost = new HttpPost(searchUrl);
         CloseableHttpResponse response = null;
         try {

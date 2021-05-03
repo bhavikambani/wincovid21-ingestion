@@ -64,6 +64,41 @@ create table resource_sub_category (
 );
 
 
+--- USER
+create table user_details (
+    id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+        name VARCHAR(128) NOT NULL,
+        user_name VARCHAR(128) NOT NULL UNIQUE,
+        password VARCHAR(128) NOT NULL,
+        created_on DATETIME DEFAULT CURRENT_TIMESTAMP,
+       	updated_on DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+create table user_session (
+    id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+        token_id VARCHAR(128) NOT NULL UNIQUE,
+        user_id INT NOT NULL,
+        created_on DATETIME DEFAULT CURRENT_TIMESTAMP,
+
+  CONSTRAINT FOREIGN KEY (user_id)
+  REFERENCES user_details(id)
+  ON DELETE CASCADE
+  ON UPDATE CASCADE
+);
+
+INSERT INTO user_details (name, user_name, password) values ("Bhavik Ambani", "bhavik123", "bhavikp1");
+INSERT INTO user_details (name, user_name, password) values ("Myntra CC", "myntracc", "myntracc");
+INSERT INTO user_details (name, user_name, password) values ("Admin User", "admin", "admin123");
+
+--------
+
+CREATE TABLE `feedback_types` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `feedback_code` varchar(1024) NOT NULL,
+  `feedback_message` varchar(1024) NOT NULL,
+  `updated_on` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
 
 insert into resource_category (category_name, icon_name) values  ('Oxygen', 'Oxygen');
 insert into resource_category (category_name, icon_name) values  ('hospital', 'Bed');
