@@ -4,8 +4,8 @@ import lombok.Data;
 import lombok.NonNull;
 
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Set;
+import java.util.TreeSet;
 
 @Data
 public class StateWiseConfiguredCities {
@@ -14,7 +14,7 @@ public class StateWiseConfiguredCities {
 
     public StateWiseConfiguredCities(@NonNull final StateDetails s) {
         this.state = s;
-        cityDetailsList = Collections.synchronizedSet(new HashSet<>());
+        cityDetailsList = Collections.synchronizedSet(new TreeSet<>());
     }
 
     public void addCity(@NonNull final CityDetails cityDetails) {
