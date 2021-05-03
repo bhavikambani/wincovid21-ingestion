@@ -78,9 +78,8 @@ public class UserActionController {
 
     @GetMapping("/feedback-types")
     @Trace
-    public IngestionResponse<List<FeedbackType>> getFeedbackList() {
-        return IngestionResponse.<List<FeedbackType>>builder().httpStatus(HttpStatus.OK).result(userActionService.getFeedbackTypes()).build();
-
+    public IngestionResponse<List<FeedbackType>> getFeedbackList(final @RequestHeader(value = "covid-at", required = false) String authToken) {
+        return IngestionResponse.<List<FeedbackType>>builder().httpStatus(HttpStatus.OK).result(userActionService.getFeedbackTypes(authToken)).build();
     }
 
     @PutMapping("/inlidate-cache/feedbacklist")

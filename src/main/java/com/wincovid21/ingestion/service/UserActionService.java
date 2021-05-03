@@ -16,7 +16,7 @@ public interface UserActionService {
     void updateStatus(@NonNull final UserActionAudit userActionAudit);
 
     @Trace
-    List<FeedbackType> getFeedbackTypes();
+    List<FeedbackType> getFeedbackTypes(final String authToken);
 
     @Trace
     UserActionAudit toEntity(UserActionDTO userActionDTO);
