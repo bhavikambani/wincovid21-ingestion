@@ -1,5 +1,6 @@
 package com.wincovid21.ingestion.service.user;
 
+import com.newrelic.api.agent.Trace;
 import com.wincovid21.ingestion.domain.LoginRequest;
 import com.wincovid21.ingestion.entity.UserDetails;
 import com.wincovid21.ingestion.entity.UserSession;
@@ -14,6 +15,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Optional;
 import java.util.UUID;
@@ -27,7 +29,6 @@ public class UserAuthService {
     @Value("${wincovid.auth.token.expiry.hours}")
     @Getter
     private int loginAuthTokenExpiryHours;
-
 
     public UserAuthService(@Autowired final UserRepository userRepository,
                            @Autowired final UserSessionRepository userSessionRepository) {
@@ -61,7 +62,32 @@ public class UserAuthService {
 
         userSessionRepository.save(userSession);
         log.info("User Session Updated for user # {}, with # {}", userDetails, userSession);
+
+        isAuthorised(userSession.getTokenId());
+
         return userSession;
+    }
+
+    @Trace
+    public boolean isAuthorised(@NonNull final String token) {
+        Optional<UserSession> userSessionOptional = userSessionRepository.findByTokenId(token);
+
+        if (!(userSessionOptional.isPresent())) {
+            return false;
+        }
+
+        UserSession userSession = userSessionOptional.get();
+        Calendar tokenCreteTime = Calendar.getInstance();
+        tokenCreteTime.setTime(userSession.getCreatedOn());
+        tokenCreteTime.add(Calendar.HOUR_OF_DAY, loginAuthTokenExpiryHours);
+        Date tokenExpiryTime = tokenCreteTime.getTime();
+        log.info("Token Expiry Time # {}", tokenExpiryTime);
+
+        if (tokenExpiryTime.after(new Date())) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
 }
