@@ -50,7 +50,7 @@ public class HelloCoviMyn {
 
         userActionFlagRepository.save(userActionFlag);
 
-        List<FeedbackType> feedbackTypes = userActionService.getFeedbackTypes();
+        List<FeedbackType> feedbackTypes = userActionService.getFeedbackTypes("abc");
 
 
         List<Object[]> objects = userActionFlagRepository.fetchDetails();

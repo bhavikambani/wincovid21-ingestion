@@ -88,8 +88,8 @@ public class CacheUtil {
                 .maximumSize(1000)
                 .recordStats()
                 .build(key -> {
-                    cacheMetrics.addCache(RESOURCE_LIST, availableResources);
                     if (RESOURCE_LIST.equals(key)) {
+                        log.info("Loading Cache.");
                         final Map<Category, Set<Resource>> resourceCategorySetMap = new ConcurrentHashMap<>();
                         final List<Object[]> categoryResourceMapping = resourceDetailsRepository.fetchCategoryResourceMapping();
                         Map<ResourceCategory, Set<ResourceSubCategory>> resourceCategoryListConcurrentHashMap = new ConcurrentHashMap<>();
@@ -105,6 +105,7 @@ public class CacheUtil {
                                 if (elements != null && elements.length == 2 && elements[0] != null && elements[1] != null) {
                                     Long category = Long.parseLong(elements[0].toString());
                                     Long resourceType = Long.parseLong(elements[1].toString());
+                                    log.info("Iterating Types from DB | Category # {}, resource # {}", category, resourceType);
 
                                     Optional<ResourceCategory> optionalResourceCategory = resourceCategoryRepository.findById(category);
                                     Optional<ResourceSubCategory> optionalResourceSubCategory = resourceSubcategoryRepository.findById(resourceType);
@@ -115,6 +116,7 @@ public class CacheUtil {
                                         if (CollectionUtils.isEmpty(resourceSubCategories)) {
                                             resourceSubCategories = Collections.synchronizedSet(new HashSet<>());
                                         }
+                                        log.info("Iterating Category Entity # {}, resource # {}", optionalResourceCategory.get().getCategoryName(), optionalResourceSubCategory.get().getSubCategoryName());
                                         resourceSubCategories.add(optionalResourceSubCategory.get());
                                         resourceCategoryListConcurrentHashMap.put(optionalResourceCategory.get(), resourceSubCategories);
                                     }
@@ -122,24 +124,30 @@ public class CacheUtil {
                             });
                         }
 
-                        resourceCategoryListConcurrentHashMap.forEach((category, cities) -> {
-                            Category stateDetail = Category.builder().id(category.getId()).icon(category.getIconName()).categoryName(category.getCategoryName()).build();
-                            Set<Resource> cityDetails = cities.stream().map(c -> Resource.builder().id(c.getId()).resourceName(c.getSubCategoryName()).icon(c.getIconName()).build()).collect(Collectors.toSet());
-                            resourceCategorySetMap.put(stateDetail, cityDetails);
-
+                        resourceCategoryListConcurrentHashMap.forEach((category, resources) -> {
+                            Category categoryDetail = Category.builder().id(category.getId()).icon(category.getIconName()).categoryName(category.getCategoryName()).build();
+                            resources.forEach(c -> {
+                                Resource resource = Resource.builder().id(c.getId()).resourceName(c.getSubCategoryName()).icon(c.getIconName()).build();
+                                Set<Resource> existingResources = resourceCategorySetMap.get(categoryDetail);
+                                if (CollectionUtils.isEmpty(existingResources)) {
+                                    existingResources = Collections.synchronizedSet(new HashSet<>());
+                                }
+                                existingResources.add(resource);
+                                resourceCategorySetMap.put(categoryDetail, existingResources);
+                            });
+                            log.info("Iterating Category # {}, resource # {}", categoryDetail, resourceCategorySetMap.get(categoryDetail).stream().map(Resource::getResourceName).collect(Collectors.toList()));
                         });
                         return resourceCategorySetMap;
                     }
                     return Collections.emptyMap();
                 });
-
+        cacheMetrics.addCache(RESOURCE_LIST, availableResources);
         resourceStateCityDetails = Caffeine
                 .newBuilder()
                 .refreshAfterWrite(cacheConfig.getCityStateListCacheInvalidationTTL(), TimeUnit.SECONDS)
                 .maximumSize(100000)
                 .recordStats()
                 .build(key -> {
-                    cacheMetrics.addCache(RESOURCE_CITY_STATE, resourceStateCityDetails);
                     if (RESOURCE_CITY_STATE.equals(key)) {
 
                         final Map<StateDetails, Set<CityDetails>> resourceStateCityDetailsList = new ConcurrentHashMap<>();
@@ -184,6 +192,7 @@ public class CacheUtil {
                     }
                     return Collections.emptyMap();
                 });
+        cacheMetrics.addCache(RESOURCE_CITY_STATE, resourceStateCityDetails);
     }
 
     @Trace

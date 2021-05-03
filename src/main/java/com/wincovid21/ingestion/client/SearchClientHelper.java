@@ -23,23 +23,20 @@ public class SearchClientHelper {
     private ObjectMapper objectMapper;
     private static final String searchUrl = "http://search.wincovid21.in/wincovid21-search-service/upsert";
 
-    public IngestionResponse makeHttpPostRequest(ResourceRequestEntry resourceRequestEntry) throws IOException {
+    public IngestionResponse<HttpEntity> makeHttpPostRequest(ResourceRequestEntry resourceRequestEntry) throws IOException {
         HttpPost httpPost = new HttpPost(searchUrl);
         CloseableHttpResponse response = null;
-        try {
-            CloseableHttpClient client = HttpClients.createDefault();
-
+        try (CloseableHttpClient client = HttpClients.createDefault()) {
             StringEntity entity = new StringEntity(objectMapper.writeValueAsString(resourceRequestEntry));
             httpPost.setEntity(entity);
             httpPost.setHeader(HttpHeaders.ACCEPT, "application/json");
             httpPost.setHeader(HttpHeaders.CONTENT_TYPE, "application/json");
             response = client.execute(httpPost);
-            IngestionResponse ingestionResponse = IngestionResponse.<HttpEntity>builder().httpStatus(HttpStatus.OK).result(response.getEntity()).build();
-            return ingestionResponse;
-        }
-        finally {
+            return IngestionResponse.<HttpEntity>builder().httpStatus(HttpStatus.OK).result(response.getEntity()).build();
+        } finally {
             httpPost.releaseConnection();
-            response.close();
+            if (response != null)
+                response.close();
         }
     }
 }

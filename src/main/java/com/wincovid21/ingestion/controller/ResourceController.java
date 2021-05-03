@@ -5,6 +5,7 @@ import com.wincovid21.ingestion.domain.*;
 import com.wincovid21.ingestion.service.ResourceService;
 import com.wincovid21.ingestion.util.cache.CacheUtil;
 import lombok.NonNull;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.util.CollectionUtils;
@@ -19,6 +20,7 @@ import java.util.Map;
 import java.util.Set;
 
 @RestController
+@Slf4j
 @RequestMapping("/resource")
 public class ResourceController {
 
@@ -42,13 +44,14 @@ public class ResourceController {
             IngestionResponse.<List<ResourceCategoryDetails>>builder().httpStatus(HttpStatus.OK).result(resourceCategoryDetails).build();
         }
 
+        log.info("availableResources from Cache# {}", availableResources);
         availableResources.forEach((c, r) -> {
             ResourceCategoryDetails resourceCategoryDetails1 = new ResourceCategoryDetails(c);
             resourceCategoryDetails1.addResource(r);
 
             resourceCategoryDetails.add(resourceCategoryDetails1);
         });
-
+        log.info("availableResources Response # {}", resourceCategoryDetails);
         return IngestionResponse.<List<ResourceCategoryDetails>>builder().httpStatus(HttpStatus.OK).result(resourceCategoryDetails).build();
     }
 
@@ -63,6 +66,7 @@ public class ResourceController {
 
             stateWiseConfiguredCities.add(stateWiseConfiguredCity);
         });
+        log.info("City State # {}", stateWiseConfiguredCities);
         return IngestionResponse.<List<StateWiseConfiguredCities>>builder().httpStatus(HttpStatus.OK).result(stateWiseConfiguredCities).build();
     }
 
