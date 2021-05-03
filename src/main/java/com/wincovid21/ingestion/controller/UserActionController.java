@@ -17,6 +17,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 
 @Slf4j
@@ -38,10 +39,18 @@ public class UserActionController {
 
     @PostMapping("/feedback")
     @Trace
-    public IngestionResponse<Boolean> userFeedback(@RequestBody UserActionDTO userActionAudit,
-                                                   final @RequestHeader(value = "covid-at", required = false) String authToken) throws UnAuthorizedUserException {
-        userActionService.updateStatus(userActionService.toEntity(userActionAudit), authToken);
-        return IngestionResponse.<Boolean>builder().result(true).httpStatus(HttpStatus.OK).build();
+    public ResponseEntity<Boolean> userFeedback(@RequestBody UserActionDTO userActionAudit,
+                                                final @RequestHeader(value = "covid-at", required = false) String authToken) {
+        try {
+            userActionService.updateStatus(userActionService.toEntity(userActionAudit), authToken);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(false);
+        } catch (UnAuthorizedUserException ue) {
+            log.error("UnAuthorised user action # {}.", userActionAudit, ue);
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(false);
+        } catch (IOException e) {
+            log.error("UnAuthorised user action # {}.", userActionAudit, e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(false);
+        }
     }
 
     @PostMapping("/login")
