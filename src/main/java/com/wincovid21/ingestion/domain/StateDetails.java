@@ -13,6 +13,6 @@ public class StateDetails implements Comparable<StateDetails> {
 
     @Override
     public int compareTo(StateDetails o) {
-        return o.stateName.compareTo(this.stateName);
+        return this.stateName.compareTo(o.stateName);
     }
 }

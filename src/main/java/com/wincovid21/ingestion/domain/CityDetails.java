@@ -12,6 +12,6 @@ public class CityDetails implements Comparable<CityDetails> {
 
     @Override
     public int compareTo(CityDetails o) {
-        return o.cityName.compareTo(this.cityName);
+        return this.cityName.compareTo(o.cityName);
     }
 }
