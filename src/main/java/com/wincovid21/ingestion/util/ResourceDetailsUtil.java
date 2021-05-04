@@ -1,6 +1,8 @@
 package com.wincovid21.ingestion.util;
 
 import com.wincovid21.ingestion.domain.AvailabilityType;
+import com.wincovid21.ingestion.domain.Resource;
+import com.wincovid21.ingestion.domain.ResourceDetailDTO;
 import com.wincovid21.ingestion.domain.VerificationType;
 import com.wincovid21.ingestion.entity.ResourceAvailabilityDetails;
 import com.wincovid21.ingestion.entity.ResourceDetails;
@@ -119,6 +121,28 @@ public class ResourceDetailsUtil {
         resourceDetails.setResourceType(resourceSubcategoryRepository.fetchResourceTypeIdForName(String.valueOf(objectList.get(4))));
         resourceDetails.setCity(cityRepository.fetchCityIdForName(String.valueOf(objectList.get(9))));
         resourceDetails.setState(stateRepository.fetchStateIdForName(String.valueOf(objectList.get(10))));
+        return resourceDetails;
+    }
+
+    public ResourceDetails transformEntryToEntity(ResourceDetailDTO resourceDetailDTO) {
+        ResourceDetails resourceDetails = new ResourceDetails();
+        resourceDetails.setCategory(resourceCategoryRepository.findResourceCategoryById(resourceDetailDTO.getCategoryId()));
+        resourceDetails.setResourceType(resourceSubcategoryRepository.findResourceSubCategoryById(resourceDetailDTO.getResourceTypeId()));
+        resourceDetails.setState(stateRepository.findStateById(resourceDetailDTO.getStateId()));
+        resourceDetails.setCity(cityRepository.findCityById(resourceDetailDTO.getCityId()));
+        resourceDetails.setName(resourceDetailDTO.getName());
+        resourceDetails.setPhone1(resourceDetailDTO.getPhone1());
+        resourceDetails.setCreatedBy("External User");
+        resourceDetails.setCreatedOn(System.currentTimeMillis());
+        resourceDetails.setUpdatedOn(System.currentTimeMillis());
+//        resourceDetails.setAddress("");
+//        resourceDetails.setPinCode(0l);
+//        resourceDetails.setDescription("");
+//        resourceDetails.setPhone2("");
+//        resourceDetails.setPrice("");
+//        resourceDetails.setEmail("");
+        resourceDetails.setQuantityAvailable(AvailabilityType.OUT_OF_STOCK.getValue());
+        resourceDetails.setVerified(false);
         return resourceDetails;
     }
 

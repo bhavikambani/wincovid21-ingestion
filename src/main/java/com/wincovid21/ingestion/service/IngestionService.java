@@ -1,6 +1,6 @@
 package com.wincovid21.ingestion.service;
 
-import com.google.api.client.util.DateTime;
+import com.wincovid21.ingestion.domain.ResourceDetailDTO;
 
 public interface IngestionService {
 
@@ -9,4 +9,7 @@ public interface IngestionService {
    Long fetchLastModifiedOn();
 
    int resourceBulkUpdate();
+
+   void resourceCreate(ResourceDetailDTO resourceDetailDTO) throws Exception;
+
 }

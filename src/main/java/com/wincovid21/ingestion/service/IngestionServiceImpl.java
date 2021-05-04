@@ -5,6 +5,8 @@ import com.google.api.services.drive.model.File;
 import com.google.api.services.sheets.v4.Sheets;
 import com.google.api.services.sheets.v4.model.ValueRange;
 import com.wincovid21.ingestion.client.SearchClientHelper;
+import com.wincovid21.ingestion.domain.Resource;
+import com.wincovid21.ingestion.domain.ResourceDetailDTO;
 import com.wincovid21.ingestion.entity.ResourceCategory;
 import com.wincovid21.ingestion.entity.ResourceDetails;
 import com.wincovid21.ingestion.entity.ResourceRequestEntry;
@@ -143,6 +145,28 @@ public class IngestionServiceImpl implements IngestionService {
             logger.error("Exception occurred due to ", e);
             return 0;
         }
+    }
+
+    public void resourceCreate(ResourceDetailDTO resourceDetailDTO) throws Exception {
+
+        if (validateResourceDetailDTO(resourceDetailDTO)) {
+            ResourceDetails resourceDetails = resourceDetailsUtil.transformEntryToEntity(resourceDetailDTO);
+            resourceDetailsRepository.save(resourceDetails);
+            ResourceRequestEntry resourceRequestEntry = resourceDetailsUtil.convertToRREntry(resourceDetails);
+            searchClientHelper.makeHttpPostRequest(resourceRequestEntry);
+        } else {
+            logger.error("The current resource entry already exists in the database, so ignoring its creation");
+        }
+
+    }
+
+    private boolean validateResourceDetailDTO(ResourceDetailDTO resourceDetailDTO) {
+       ResourceDetails resourceDetails = resourceDetailsRepository.fetchResourceByPrimaryKey(resourceDetailDTO.getPhone1(),
+               resourceDetailDTO.getName(),resourceDetailDTO.getResourceTypeId(),resourceDetailDTO.getCategoryId());
+       if(Objects.nonNull(resourceDetails)) {
+           return false;
+       }
+       return true;
     }
 
 

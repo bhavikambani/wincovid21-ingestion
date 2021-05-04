@@ -12,4 +12,7 @@ public interface StateRepository extends CrudRepository<State, Long>, JpaSpecifi
     @Query(value = "select s from State s where s.stateName = :name ")
     State fetchStateIdForName(String name);
 
+    @Query(value = "select s from State s where s.id = :id ")
+    State findStateById(Long id);
+
 }

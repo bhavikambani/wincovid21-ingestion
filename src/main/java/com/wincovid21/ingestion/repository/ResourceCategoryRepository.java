@@ -13,5 +13,8 @@ public interface ResourceCategoryRepository extends CrudRepository<ResourceCateg
     @Query(value = "select rc from ResourceCategory rc where rc.categoryName = :name")
     ResourceCategory fetchCategoryIdForName(String name);
 
+    @Query(value = "select rc from ResourceCategory rc where rc.id = :id ")
+    ResourceCategory findResourceCategoryById(Long id);
+
 }
 
