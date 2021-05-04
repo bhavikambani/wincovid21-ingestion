@@ -173,13 +173,13 @@ insert into resource_sub_category (sub_category_name, category_id, icon_name) va
 insert into resource_sub_category (sub_category_name, category_id, icon_name) values ('Doctors', 7 , 'icon1');
 insert into resource_sub_category (sub_category_name, category_id, icon_name) values ('Pharmacies', 7 , 'icon1');
 
-
+ALTER TABLE feedback_types   ADD CONSTRAINT feedback_message_unique  UNIQUE(feedback_message);
 
 insert into feedback_types (feedback_code, feedback_message,verification_status,availability_status) values ('C1', 'Verified','VERIFIED','AVAILABLE');
-insert into feedback_types (feedback_code, feedback_message,verification_status,availability_status) values ('C2', 'Available','VERIFIED','AVAILABLE');
-insert into feedback_types (feedback_code, feedback_message,verification_status,availability_status) values ('C3', 'Unavailable','VERIFIED','UNAVAILABLE');
-insert into feedback_types (feedback_code, feedback_message,verification_status,availability_status) values ('C3', 'Unavailable','VERIFIED','UNAVAILABLE');
-
+insert into feedback_types (feedback_code, feedback_message,verification_status,availability_status) values ('C2', 'Item Available','VERIFIED','AVAILABLE');
+insert into feedback_types (feedback_code, feedback_message,verification_status,availability_status) values ('C3', 'Item Unavailable','VERIFIED','OUT_OF_STOCK');
+insert into feedback_types (feedback_code, feedback_message,verification_status,availability_status) values ('C4', 'Invalid Number','VERIFIED','OUT_OF_STOCK');
+insert into feedback_types (feedback_code, feedback_message,verification_status,availability_status) values ('C5', 'Number not reachable','UNVERIFIED','OUT_OF_STOCK');
 
 ---- Basic insert queries to setup DB
 insert into state_details (state_name, icon_path) values ("Maharastra", "abc.png");
