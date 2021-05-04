@@ -2,10 +2,7 @@ package com.wincovid21.ingestion.service;
 
 import com.newrelic.api.agent.Trace;
 import com.wincovid21.ingestion.client.SearchClientHelper;
-import com.wincovid21.ingestion.domain.Category;
-import com.wincovid21.ingestion.domain.CityDetails;
-import com.wincovid21.ingestion.domain.Resource;
-import com.wincovid21.ingestion.domain.StateDetails;
+import com.wincovid21.ingestion.domain.*;
 import com.wincovid21.ingestion.entity.FeedbackType;
 import com.wincovid21.ingestion.entity.ResourceDetails;
 import com.wincovid21.ingestion.entity.ResourceRequestEntry;
@@ -15,6 +12,8 @@ import com.wincovid21.ingestion.repository.ResourceDetailsRepository;
 import com.wincovid21.ingestion.util.ResourceDetailsUtil;
 import com.wincovid21.ingestion.util.cache.CacheUtil;
 import lombok.NonNull;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.http.HttpEntity;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -23,6 +22,7 @@ import java.util.Optional;
 import java.util.Set;
 
 @Service
+@Slf4j
 public class ResourceServiceImpl implements ResourceService {
 
     private final CacheUtil cacheUtil;
@@ -94,7 +94,9 @@ public class ResourceServiceImpl implements ResourceService {
             resourceDetailsRepository.save(resourceDetails);
 
             ResourceRequestEntry resourceRequestEntry = ResourceDetailsUtil.convertToRREntry(resourceDetails);
-            searchClientHelper.makeHttpPostRequest(resourceRequestEntry);
+            log.info("Publishing Audit event to ES # {}", resourceRequestEntry);
+            IngestionResponse<HttpEntity> earchResponse = searchClientHelper.makeHttpPostRequest(resourceRequestEntry);
+            log.info("Publishing Audit event response # {}", earchResponse);
         }
     }
 }
