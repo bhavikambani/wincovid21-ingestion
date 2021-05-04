@@ -18,6 +18,9 @@ public interface UserActionService {
     void updateStatus(@NonNull final UserActionAudit userActionAudit, String authToken) throws UnAuthorizedUserException, IOException;
 
     @Trace
+    void updateAndIndexStatus(@NonNull final UserActionAudit userActionAudit, String authToken) throws UnAuthorizedUserException, IOException;
+
+    @Trace
     List<FeedbackType> getFeedbackTypes(final String authToken);
 
     @Trace

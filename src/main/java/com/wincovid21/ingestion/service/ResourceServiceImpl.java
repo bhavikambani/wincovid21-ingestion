@@ -6,8 +6,10 @@ import com.wincovid21.ingestion.domain.Category;
 import com.wincovid21.ingestion.domain.CityDetails;
 import com.wincovid21.ingestion.domain.Resource;
 import com.wincovid21.ingestion.domain.StateDetails;
+import com.wincovid21.ingestion.entity.FeedbackType;
 import com.wincovid21.ingestion.entity.ResourceDetails;
 import com.wincovid21.ingestion.entity.ResourceRequestEntry;
+import com.wincovid21.ingestion.entity.VerificationTypeEntity;
 import com.wincovid21.ingestion.exception.UnAuthorizedUserException;
 import com.wincovid21.ingestion.repository.ResourceDetailsRepository;
 import com.wincovid21.ingestion.util.ResourceDetailsUtil;
@@ -79,5 +81,20 @@ public class ResourceServiceImpl implements ResourceService {
             throw new UnAuthorizedUserException("Resource id # " + resourceId + " does not exists");
         }
 
+    }
+
+    @Override
+    public void updateES(Long resourceId, FeedbackType feedbackType) throws IOException {
+        Optional<ResourceDetails> resourceEntityOptional = resourceDetailsRepository.findById(resourceId);
+
+        if (resourceEntityOptional.isPresent()) {
+            ResourceDetails resourceDetails = resourceEntityOptional.get();
+            resourceDetails.setVerified(feedbackType.getVerificationStatus() == VerificationTypeEntity.VERIFIED);
+            resourceDetails.setQuantityAvailable(feedbackType.getAvailabilityStatus().toString());
+            resourceDetailsRepository.save(resourceDetails);
+
+            ResourceRequestEntry resourceRequestEntry = ResourceDetailsUtil.convertToRREntry(resourceDetails);
+            searchClientHelper.makeHttpPostRequest(resourceRequestEntry);
+        }
     }
 }

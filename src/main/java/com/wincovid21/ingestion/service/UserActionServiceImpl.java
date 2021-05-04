@@ -7,6 +7,7 @@ import com.wincovid21.ingestion.entity.FeedbackType;
 import com.wincovid21.ingestion.entity.UserActionAudit;
 import com.wincovid21.ingestion.entity.UserSession;
 import com.wincovid21.ingestion.exception.UnAuthorizedUserException;
+import com.wincovid21.ingestion.repository.FeedbackTypesRepository;
 import com.wincovid21.ingestion.repository.UserActionAuditRepository;
 import com.wincovid21.ingestion.repository.UserSessionRepository;
 import com.wincovid21.ingestion.repository.UserTypeRepository;
@@ -33,6 +34,9 @@ public class UserActionServiceImpl implements UserActionService {
     private final ResourceService resourceService;
     @Autowired
     private UserSessionRepository userSessionRepository;
+
+    @Autowired
+    private FeedbackTypesRepository feedbackTypesRepository;
 
     @Autowired
     private UserTypeRepository userTypeRepository;
@@ -70,6 +74,21 @@ public class UserActionServiceImpl implements UserActionService {
                 throw new UnAuthorizedUserException("Invalid Action Performed");
             }
         }
+    }
+
+    @Override
+    public void updateAndIndexStatus(@NonNull UserActionAudit userActionAudit, String authToken) throws UnAuthorizedUserException, IOException {
+        log.info("userActionAudit # {}, auth # {}", userActionAudit, authToken);
+        userActionAuditRepository.save(userActionAudit);
+
+        Optional<FeedbackType> byFeedbackMessage = feedbackTypesRepository.findByFeedbackMessage(userActionAudit.getFeedbackType());
+
+        log.info("byFeedbackMessage" + byFeedbackMessage);
+
+        if (byFeedbackMessage.isPresent()){
+            resourceService.updateES(userActionAudit.getResourceId(), byFeedbackMessage.get());
+        }
+
     }
 
 
