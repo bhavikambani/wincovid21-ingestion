@@ -1,31 +1,36 @@
 package com.wincovid21.ingestion.controller;
 
-import com.wincovid21.ingestion.domain.*;
-import com.wincovid21.ingestion.entity.FeedbackType;
-import com.wincovid21.ingestion.entity.UserActionAudit;
+import com.wincovid21.ingestion.entity.UserDetails;
 import com.wincovid21.ingestion.repository.CityRepository;
 import com.wincovid21.ingestion.repository.UserActionAuditRepository;
+import com.wincovid21.ingestion.repository.UserRepository;
+import com.wincovid21.ingestion.repository.UserTypeAllowedFeedbackTypesRepository;
 import com.wincovid21.ingestion.service.UserActionService;
 import com.wincovid21.ingestion.util.cache.CacheUtil;
 import com.wincovid21.ingestion.util.monit.Profiler;
-import com.wincovid21.ingestion.util.monit.ProfilerNames;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NonNull;
-import org.springframework.http.HttpStatus;
-import org.springframework.util.CollectionUtils;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.*;
-
 @RestController
+@Slf4j
 public class HelloCoviMyn {
 
     private final UserActionAuditRepository userActionFlagRepository;
     private final UserActionService userActionService;
+    @Autowired
+    private UserRepository userRepository;
     private final CityRepository cityRepository;
     private final CacheUtil cacheUtil;
+
+
+    @Autowired
+    private UserTypeAllowedFeedbackTypesRepository userTypeAllowedFeedbackTypesRepository;
 
     private final Profiler profiler;
 
@@ -41,52 +46,15 @@ public class HelloCoviMyn {
     }
 
     @GetMapping("/")
-    public IngestionResponse<List<ResourceCategoryDetails>> sayHello() {
-        profiler.increment(ProfilerNames.HELLO_TOTAL);
-        UserActionAudit userActionFlag = new UserActionAudit();
-        userActionFlag.setResourceId(123L);
-        userActionFlag.setUpdatedOn(new Date());
-        userActionFlag.setFeedbackType("abc");
+    public Boolean sayHello(@RequestParam Long userId) {
+        log.info("Request received with id # {} and {}", userId, userRepository.findById(userId));
+        UserDetails userDetails = userRepository.findById(userId).get();
+        log.info("Types # {}", userDetails.getUserType());
 
-        userActionFlagRepository.save(userActionFlag);
+        log.info("Feedback List # {}", cacheUtil.getUseWiseAllowedFeedback(userDetails.getUserType().getId()));
 
-        List<FeedbackType> feedbackTypes = userActionService.getFeedbackTypes("abc");
-
-
-        List<Object[]> objects = userActionFlagRepository.fetchDetails();
-
-        List<Response> responses = new ArrayList<>();
-
-
-        if (!(CollectionUtils.isEmpty(objects))) {
-            objects.forEach(a -> responses.add(Response.builder().a(a[0].toString()).b(a[1].toString()).build()));
-        }
-
-        IngestionResponse.<List<Response>>builder().httpStatus(HttpStatus.OK).result(responses).build();
-
-        Map<StateDetails, Set<CityDetails>> stateCityDetails = cacheUtil.getStateCityDetails();
-
-        List<StateWiseConfiguredCities> stateWiseConfiguredCities = new ArrayList<>();
-
-        stateCityDetails.forEach((s, cities) -> {
-            StateWiseConfiguredCities stateWiseConfiguredCity = new StateWiseConfiguredCities(s);
-            stateWiseConfiguredCity.addCity(cities);
-
-            stateWiseConfiguredCities.add(stateWiseConfiguredCity);
-        });
-
-        Map<Category, Set<Resource>> availableResources = cacheUtil.getAvailableResources();
-
-        List<ResourceCategoryDetails> resourceCategoryDetails = new ArrayList<>();
-
-        availableResources.forEach((r, c) -> {
-            ResourceCategoryDetails resourceCategoryDetails1 = new ResourceCategoryDetails(r);
-            resourceCategoryDetails1.addResource(c);
-
-            resourceCategoryDetails.add(resourceCategoryDetails1);
-        });
-
-        return IngestionResponse.<List<ResourceCategoryDetails>>builder().httpStatus(HttpStatus.OK).result(resourceCategoryDetails).build();
+        log.info("Sessions # {}", userTypeAllowedFeedbackTypesRepository.findAllByUserType(userDetails.getUserType().getId()));
+        return true;
     }
 
 }

@@ -31,9 +31,18 @@ public class UserDetails {
     @Column(name = "updated_on", insertable = false, updatable = false)
     private Date updatedOn;
 
+    @ManyToOne
+    @JoinColumn(name = "user_type", nullable = false)
+    @ToString.Exclude
+    private UserType userType;
+
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     @ToString.Exclude
     private List<UserSession> userSessions;
+
+    @OneToMany(mappedBy = "feedbackType", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    @ToString.Exclude
+    private List<UserTypeAllowedFeedbackTypes> allowedFeedbackTypes;
 
 
 }
