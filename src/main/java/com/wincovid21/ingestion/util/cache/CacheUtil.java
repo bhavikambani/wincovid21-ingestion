@@ -29,6 +29,7 @@ public class CacheUtil {
     private static final String FEEDBACK_TYPES_LIST = "FEEDBACK_TYPES_LIST";
     private static final String RESOURCE_CITY_STATE = "RESOURCE_STATE_CITY";
     private static final String RESOURCE_LIST = "RESOURCE_LIST";
+    private static final String USER_TYPE_WISE_FEEDBACK_TYPES_LIST = "USER_TYPE_WISE_FEEDBACK_TYPES_LIST";
 
     private final CacheConfig cacheConfig;
     private final FeedbackTypesRepository feedbackTypesRepository;
@@ -38,11 +39,14 @@ public class CacheUtil {
     private final CollectorRegistry meterRegistry;
     private final ResourceCategoryRepository resourceCategoryRepository;
     private final ResourceSubcategoryRepository resourceSubcategoryRepository;
+    private final UserTypeAllowedFeedbackTypesRepository userTypeAllowedFeedbackTypesRepository;
 
     // Cache Elements
     private LoadingCache<String, List<FeedbackType>> feedbackTypesList;
     private LoadingCache<String, Map<StateDetails, Set<CityDetails>>> resourceStateCityDetails;
     private LoadingCache<String, Map<Category, Set<Resource>>> availableResources;
+    private LoadingCache<String, Map<Long, List<FeedbackType>>> userTypeWiseAvailableFeedbackTypesList;
+
 
     public CacheUtil(@NonNull final CacheConfig cacheConfig,
                      @NonNull final FeedbackTypesRepository feedbackTypesRepository,
@@ -51,7 +55,8 @@ public class CacheUtil {
                      @NonNull final StateRepository stateRepository,
                      @NonNull final CityRepository cityRepository,
                      @NonNull final ResourceCategoryRepository resourceCategoryRepository,
-                     @NonNull final ResourceSubcategoryRepository resourceSubcategoryRepository) {
+                     @NonNull final ResourceSubcategoryRepository resourceSubcategoryRepository,
+                     @NonNull final UserTypeAllowedFeedbackTypesRepository userTypeAllowedFeedbackTypesRepository) {
         this.cacheConfig = cacheConfig;
         this.feedbackTypesRepository = feedbackTypesRepository;
         this.meterRegistry = meterRegistry;
@@ -60,6 +65,7 @@ public class CacheUtil {
         this.cityRepository = cityRepository;
         this.resourceCategoryRepository = resourceCategoryRepository;
         this.resourceSubcategoryRepository = resourceSubcategoryRepository;
+        this.userTypeAllowedFeedbackTypesRepository = userTypeAllowedFeedbackTypesRepository;
     }
 
     @PostConstruct
@@ -80,6 +86,38 @@ public class CacheUtil {
                         return feedbackTypeList;
                     }
                     return Collections.emptyList();
+                });
+
+        userTypeWiseAvailableFeedbackTypesList = Caffeine
+                .newBuilder()
+                .refreshAfterWrite(cacheConfig.getFeedbackTypeCacheInvalidationTTL(), TimeUnit.SECONDS)
+                .maximumSize(1000)
+                .recordStats()
+                .build(key -> {
+                    cacheMetrics.addCache(USER_TYPE_WISE_FEEDBACK_TYPES_LIST, userTypeWiseAvailableFeedbackTypesList);
+                    if (USER_TYPE_WISE_FEEDBACK_TYPES_LIST.equals(key)) {
+                        log.info("Initializing cache for USER_TYPE_WISE_FEEDBACK_TYPES_LIST ");
+                        Iterable<UserTypeAllowedFeedbackTypes> userTypeAllowedFeedbackTypes = userTypeAllowedFeedbackTypesRepository.findAll();
+                        log.info("Allowed Feedback Types # {}", userTypeAllowedFeedbackTypes);
+                        Iterator<UserTypeAllowedFeedbackTypes> feedbackTypeIterator = userTypeAllowedFeedbackTypes.iterator();
+                        Map<Long, List<FeedbackType>> result = new HashMap<>();
+
+                        feedbackTypeIterator.forEachRemaining(f -> {
+                            Long userType = f.getUserType().getId();
+                            log.info("Processing user type # {}", userType);
+                            List<FeedbackType> feedbackTypes = result.get(userType);
+                            log.info("Existing Feedback List # {}, user type # {}", feedbackTypes, userType);
+
+                            if (CollectionUtils.isEmpty(feedbackTypes)) {
+                                feedbackTypes = new ArrayList<>();
+                            }
+                            feedbackTypes.add(f.getFeedbackType());
+                            log.info("Final Feedback List # {}, user type # {}", feedbackTypes, userType);
+                            result.put(userType, feedbackTypes);
+                        });
+                        return result;
+                    }
+                    return Collections.emptyMap();
                 });
 
         availableResources = Caffeine
@@ -205,6 +243,20 @@ public class CacheUtil {
     @Trace
     public Map<StateDetails, Set<CityDetails>> getStateCityDetails() {
         return resourceStateCityDetails.get(RESOURCE_CITY_STATE);
+    }
+
+    public List<FeedbackType> getUseWiseAllowedFeedback(Long userType) {
+        try {
+            if (userTypeWiseAvailableFeedbackTypesList == null
+                    || userTypeWiseAvailableFeedbackTypesList.get(USER_TYPE_WISE_FEEDBACK_TYPES_LIST) == null
+                    || userTypeWiseAvailableFeedbackTypesList.get(USER_TYPE_WISE_FEEDBACK_TYPES_LIST).get(userType) == null) {
+                return Collections.emptyList();
+            }
+            return userTypeWiseAvailableFeedbackTypesList.get(USER_TYPE_WISE_FEEDBACK_TYPES_LIST).get(userType);
+        } catch (Exception e) {
+            log.error("Exception while fetching allowed feedback type for user type # {}", userType, e);
+            return Collections.emptyList();
+        }
     }
 
     @Trace

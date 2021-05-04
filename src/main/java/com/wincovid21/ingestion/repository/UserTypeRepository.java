@@ -1,6 +1,6 @@
 package com.wincovid21.ingestion.repository;
 
-import com.wincovid21.ingestion.entity.FeedbackType;
+import com.wincovid21.ingestion.entity.UserType;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
@@ -8,7 +8,8 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface FeedbackTypesRepository extends CrudRepository<FeedbackType, Long>, JpaSpecificationExecutor<FeedbackType> {
+public interface UserTypeRepository extends CrudRepository<UserType, Long>, JpaSpecificationExecutor<UserType> {
 
-    Optional<FeedbackType> findByFeedbackMessage(String feedbackMessage);
+    Optional<UserType> findByUserType(String userType);
+
 }

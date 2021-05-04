@@ -5,6 +5,7 @@ import com.wincovid21.ingestion.domain.Category;
 import com.wincovid21.ingestion.domain.CityDetails;
 import com.wincovid21.ingestion.domain.Resource;
 import com.wincovid21.ingestion.domain.StateDetails;
+import com.wincovid21.ingestion.entity.FeedbackType;
 import com.wincovid21.ingestion.exception.UnAuthorizedUserException;
 
 import java.io.IOException;
@@ -23,4 +24,6 @@ public interface ResourceService {
 
     @Trace
     void updateWithUnVerified(Long resourceId, String verificationType) throws UnAuthorizedUserException, IOException;
+
+    void updateES(Long resourceId, FeedbackType feedbackType) throws IOException;
 }
