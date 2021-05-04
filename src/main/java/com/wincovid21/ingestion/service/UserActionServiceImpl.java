@@ -79,13 +79,14 @@ public class UserActionServiceImpl implements UserActionService {
     @Override
     public void updateAndIndexStatus(@NonNull UserActionAudit userActionAudit, String authToken) throws UnAuthorizedUserException, IOException {
         log.info("userActionAudit # {}, auth # {}", userActionAudit, authToken);
-        userActionAuditRepository.save(userActionAudit);
-
+        UserActionAudit save = userActionAuditRepository.save(userActionAudit);
+        log.info("UserActionAudit # {}, auth # {} saved into DB", save, authToken);
+        log.info("Feedback Message # {}", userActionAudit.getFeedbackType());
         Optional<FeedbackType> byFeedbackMessage = feedbackTypesRepository.findByFeedbackMessage(userActionAudit.getFeedbackType());
 
         log.info("byFeedbackMessage" + byFeedbackMessage);
 
-        if (byFeedbackMessage.isPresent()){
+        if (byFeedbackMessage.isPresent()) {
             resourceService.updateES(userActionAudit.getResourceId(), byFeedbackMessage.get());
         }
 

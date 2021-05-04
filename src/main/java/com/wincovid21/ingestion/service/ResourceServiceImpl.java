@@ -86,17 +86,28 @@ public class ResourceServiceImpl implements ResourceService {
     @Override
     public void updateES(Long resourceId, FeedbackType feedbackType) throws IOException {
         Optional<ResourceDetails> resourceEntityOptional = resourceDetailsRepository.findById(resourceId);
+        boolean atLeastOneFlagChanges = false;
 
         if (resourceEntityOptional.isPresent()) {
             ResourceDetails resourceDetails = resourceEntityOptional.get();
-            resourceDetails.setVerified(feedbackType.getVerificationStatus() == VerificationTypeEntity.VERIFIED);
-            resourceDetails.setQuantityAvailable(feedbackType.getAvailabilityStatus().toString());
-            resourceDetailsRepository.save(resourceDetails);
+            if (VerificationTypeEntity.NOCHANGE != feedbackType.getVerificationStatus()) {
+                atLeastOneFlagChanges = true;
+                resourceDetails.setVerified(feedbackType.getVerificationStatus() == VerificationTypeEntity.VERIFIED);
+            }
+            if (AvailabilityType.NOCHANGE != feedbackType.getAvailabilityStatus()) {
+                atLeastOneFlagChanges = true;
+                resourceDetails.setQuantityAvailable(feedbackType.getAvailabilityStatus().toString());
+            }
+            if (atLeastOneFlagChanges) {
+                resourceDetailsRepository.save(resourceDetails);
+                ResourceRequestEntry resourceRequestEntry = ResourceDetailsUtil.convertToRREntry(resourceDetails);
+                log.info("Publishing Audit event to ES # {}", resourceRequestEntry);
+                IngestionResponse<HttpEntity> earchResponse = searchClientHelper.makeHttpPostRequest(resourceRequestEntry);
+                log.info("Publishing Audit event response # {}", earchResponse);
+            } else {
+                log.info("As not flags changed for Feedback type # {}, not pushing to ES # {}", feedbackType, resourceDetails);
+            }
 
-            ResourceRequestEntry resourceRequestEntry = ResourceDetailsUtil.convertToRREntry(resourceDetails);
-            log.info("Publishing Audit event to ES # {}", resourceRequestEntry);
-            IngestionResponse<HttpEntity> earchResponse = searchClientHelper.makeHttpPostRequest(resourceRequestEntry);
-            log.info("Publishing Audit event response # {}", earchResponse);
         }
     }
 }

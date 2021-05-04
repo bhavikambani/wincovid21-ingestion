@@ -8,6 +8,7 @@ import lombok.Getter;
 public enum VerificationTypeEntity {
 
     VERIFIED("VERIFIED"),
+    NOCHANGE("NOCHANGE"),
     UNVERIFIED("UNVERIFIED");
 
     private String type;

@@ -8,7 +8,8 @@ import lombok.Getter;
 public enum AvailabilityType {
 
     OUT_OF_STOCK("Out of Stock"),
-    AVAILABLE("Available");
+    AVAILABLE("Available"),
+    NOCHANGE("NOCHANGE");
 
     private String value;
 }
