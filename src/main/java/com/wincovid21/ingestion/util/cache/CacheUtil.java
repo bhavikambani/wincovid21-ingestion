@@ -90,7 +90,7 @@ public class CacheUtil {
 
         userTypeWiseAvailableFeedbackTypesList = Caffeine
                 .newBuilder()
-                .refreshAfterWrite(cacheConfig.getFeedbackTypeCacheInvalidationTTL(), TimeUnit.HOURS)
+                .refreshAfterWrite(cacheConfig.getFeedbackTypeCacheInvalidationTTL(), TimeUnit.SECONDS)
                 .maximumSize(1000)
                 .recordStats()
                 .build(key -> {

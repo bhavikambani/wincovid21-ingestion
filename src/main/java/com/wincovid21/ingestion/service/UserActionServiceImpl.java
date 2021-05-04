@@ -88,7 +88,7 @@ public class UserActionServiceImpl implements UserActionService {
             log.info("User Type # {}", userSessionOptional.get().getUser().getUserType().getId());
             return cacheUtil.getUseWiseAllowedFeedback(userSessionOptional.get().getUser().getUserType().getId());
         } else {
-            return cacheUtil.getUseWiseAllowedFeedback(userTypeRepository.findByUserType("Volunteer").get().getId());
+            return cacheUtil.getUseWiseAllowedFeedback(userTypeRepository.findByUserType("Visitors").get().getId());
         }
     }
 
