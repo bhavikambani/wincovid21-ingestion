@@ -42,10 +42,7 @@ public class ResourceDetailsUtil {
         resourceDetails.setCreatedBy(String.valueOf(objectList.get(16)));
         resourceDetails.setCreatedOn(System.currentTimeMillis());
         resourceDetails.setUpdatedOn(System.currentTimeMillis());
-        if (String.valueOf(objectList.get(20)).equalsIgnoreCase(VerificationType.VERIFIED_AND_DONOR_AVAILABLE.getValue()) ||
-                String.valueOf(objectList.get(20)).equalsIgnoreCase(VerificationType.VERIFIED_AND_STOCK_AVAILABLE.getValue()) ||
-                String.valueOf(objectList.get(20)).equalsIgnoreCase(VerificationType.VERIFIED_BUT_DONOR_UNAVAILBALE.getValue()) ||
-                String.valueOf(objectList.get(20)).equalsIgnoreCase(VerificationType.VERIFIED_BUT_STOCK_UNAVIALABLE.getValue())) {
+        if (String.valueOf(objectList.get(20)).equalsIgnoreCase(VerificationType.VERIFIED.getValue())) {
             resourceDetails.setVerified(true);
         } else {
             resourceDetails.setVerified(false);
@@ -109,10 +106,7 @@ public class ResourceDetailsUtil {
         if (!objectList.get(14).toString().isEmpty())
             resourceDetails.setPrice(objectList.get(14).toString());
         resourceDetails.setUpdatedOn(System.currentTimeMillis());
-        if (String.valueOf(objectList.get(20)).equalsIgnoreCase(VerificationType.VERIFIED_AND_DONOR_AVAILABLE.getValue()) ||
-                String.valueOf(objectList.get(20)).equalsIgnoreCase(VerificationType.VERIFIED_AND_STOCK_AVAILABLE.getValue()) ||
-                String.valueOf(objectList.get(20)).equalsIgnoreCase(VerificationType.VERIFIED_BUT_DONOR_UNAVAILBALE.getValue()) ||
-                String.valueOf(objectList.get(20)).equalsIgnoreCase(VerificationType.VERIFIED_BUT_STOCK_UNAVIALABLE.getValue())) {
+        if (String.valueOf(objectList.get(20)).equalsIgnoreCase(VerificationType.VERIFIED.getValue())) {
             resourceDetails.setVerified(true);
         } else {
             resourceDetails.setVerified(false);
