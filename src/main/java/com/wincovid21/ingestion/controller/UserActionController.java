@@ -1,10 +1,7 @@
 package com.wincovid21.ingestion.controller;
 
 import com.newrelic.api.agent.Trace;
-import com.wincovid21.ingestion.domain.IngestionResponse;
-import com.wincovid21.ingestion.domain.LoginRequest;
-import com.wincovid21.ingestion.domain.LoginResponse;
-import com.wincovid21.ingestion.domain.UserActionDTO;
+import com.wincovid21.ingestion.domain.*;
 import com.wincovid21.ingestion.entity.FeedbackType;
 import com.wincovid21.ingestion.entity.UserSession;
 import com.wincovid21.ingestion.exception.UnAuthorizedUserException;
@@ -15,10 +12,13 @@ import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RestController
@@ -92,8 +92,13 @@ public class UserActionController {
 
     @GetMapping("/feedback-types")
     @Trace
-    public IngestionResponse<List<FeedbackType>> getFeedbackList(final @RequestHeader(value = "covid-at", required = false) String authToken) {
-        return IngestionResponse.<List<FeedbackType>>builder().httpStatus(HttpStatus.OK).result(userActionService.getFeedbackTypes(authToken)).build();
+    public IngestionResponse<List<FeedbackTypeDomain>> getFeedbackList(final @RequestHeader(value = "covid-at", required = false) String authToken) {
+        List<FeedbackType> feedbackTypes = userActionService.getFeedbackTypes(authToken);
+
+        if (CollectionUtils.isEmpty(feedbackTypes))
+            return IngestionResponse.<List<FeedbackTypeDomain>>builder().httpStatus(HttpStatus.OK).result(Collections.emptyList()).build();
+        else
+            return IngestionResponse.<List<FeedbackTypeDomain>>builder().httpStatus(HttpStatus.OK).result(feedbackTypes.stream().map(f -> FeedbackTypeDomain.builder().feedbackCode(f.getFeedbackCode()).feedbackMessage(f.getFeedbackMessage()).id(f.getId()).build()).collect(Collectors.toList())).build();
     }
 
     @PutMapping("/inlidate-cache/feedbacklist")

@@ -101,7 +101,7 @@ create table user_session (
   ON UPDATE CASCADE
 );
 
-INSERT INTO user_type (user_type) values ("Admin");
+INSERT INTO user_type (user_type) values ("Visitors");
 INSERT INTO user_type (user_type) values ("Volunteer");
 
 INSERT INTO user_details (name, user_name, password,user_type) values ("Bhavik Ambani", "bhavik123", "bhavikp1",1);

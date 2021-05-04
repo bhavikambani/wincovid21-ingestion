@@ -5,21 +5,22 @@ import com.wincovid21.ingestion.domain.UserActionDTO;
 import com.wincovid21.ingestion.domain.VerificationType;
 import com.wincovid21.ingestion.entity.FeedbackType;
 import com.wincovid21.ingestion.entity.UserActionAudit;
+import com.wincovid21.ingestion.entity.UserSession;
 import com.wincovid21.ingestion.exception.UnAuthorizedUserException;
 import com.wincovid21.ingestion.repository.UserActionAuditRepository;
+import com.wincovid21.ingestion.repository.UserSessionRepository;
+import com.wincovid21.ingestion.repository.UserTypeRepository;
 import com.wincovid21.ingestion.service.user.UserAuthService;
 import com.wincovid21.ingestion.util.cache.CacheUtil;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -30,6 +31,11 @@ public class UserActionServiceImpl implements UserActionService {
     private final CacheUtil cacheUtil;
     private final UserAuthService userAuthService;
     private final ResourceService resourceService;
+    @Autowired
+    private UserSessionRepository userSessionRepository;
+
+    @Autowired
+    private UserTypeRepository userTypeRepository;
 
     public UserActionServiceImpl(@NonNull final UserActionAuditRepository userActionAuditRepository,
                                  @NonNull final CacheUtil cacheUtil,
@@ -76,10 +82,10 @@ public class UserActionServiceImpl implements UserActionService {
         }
 
         if (StringUtils.hasText(authToken) && userAuthService.isAuthorised(authToken)) {
-            return feedbackList;
+            Optional<UserSession> userSessionOptional = userSessionRepository.findByTokenId(authToken);
+            return cacheUtil.getUseWiseAllowedFeedback(userSessionOptional.get().getUser().getUserType().getId());
         } else {
-            Set<String> verifiableEnums = Arrays.stream(VerificationType.values()).map(VerificationType::getValue).collect(Collectors.toSet());
-            return feedbackList.stream().filter(e -> !(verifiableEnums.contains(e.getFeedbackMessage()))).collect(Collectors.toList());
+            return cacheUtil.getUseWiseAllowedFeedback(userTypeRepository.findByUserType("Volunteer").get().getId());
         }
     }
 
