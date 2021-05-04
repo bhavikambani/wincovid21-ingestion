@@ -80,9 +80,12 @@ public class UserActionServiceImpl implements UserActionService {
         if (CollectionUtils.isEmpty(feedbackList)) {
             return feedbackList;
         }
+        log.info("Auth token # {}", authToken);
 
         if (StringUtils.hasText(authToken) && userAuthService.isAuthorised(authToken)) {
             Optional<UserSession> userSessionOptional = userSessionRepository.findByTokenId(authToken);
+            log.info("userSessionOptional # {}", userSessionOptional);
+            log.info("User Type # {}", userSessionOptional.get().getUser().getUserType().getId());
             return cacheUtil.getUseWiseAllowedFeedback(userSessionOptional.get().getUser().getUserType().getId());
         } else {
             return cacheUtil.getUseWiseAllowedFeedback(userTypeRepository.findByUserType("Volunteer").get().getId());

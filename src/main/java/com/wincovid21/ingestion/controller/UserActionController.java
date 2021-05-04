@@ -94,7 +94,7 @@ public class UserActionController {
     @Trace
     public IngestionResponse<List<FeedbackTypeDomain>> getFeedbackList(final @RequestHeader(value = "covid-at", required = false) String authToken) {
         List<FeedbackType> feedbackTypes = userActionService.getFeedbackTypes(authToken);
-
+        log.info("Token # {}, Feedback types # {}", authToken, feedbackTypes);
         if (CollectionUtils.isEmpty(feedbackTypes))
             return IngestionResponse.<List<FeedbackTypeDomain>>builder().httpStatus(HttpStatus.OK).result(Collections.emptyList()).build();
         else
