@@ -10,7 +10,7 @@ import java.util.Date;
 public class UserActionDTO {
 
     private Long resourceId;
-    private String feedbackType;
+    private String feedbackMessage;
     private String feedbackCode;
     private Date updatedOn;
     private String token;

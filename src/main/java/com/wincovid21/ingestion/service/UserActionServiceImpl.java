@@ -83,7 +83,7 @@ public class UserActionServiceImpl implements UserActionService {
         UserActionAudit save = userActionAuditRepository.save(userActionAudit);
         log.info("UserActionAudit # {}, auth # {} saved into DB", save, authToken);
         log.info("Feedback Message # {}", userActionAudit.getFeedbackType());
-        Optional<FeedbackType> byFeedbackMessage = feedbackTypesRepository.findByFeedbackMessageAndFeedbackCode(userActionAuditDTO.getFeedbackCode(), userActionAuditDTO.getFeedbackType());
+        Optional<FeedbackType> byFeedbackMessage = feedbackTypesRepository.findByFeedbackMessageAndFeedbackCode(userActionAuditDTO.getFeedbackMessage(), userActionAuditDTO.getFeedbackCode());
 
         log.info("byFeedbackMessage" + byFeedbackMessage);
 
@@ -118,7 +118,7 @@ public class UserActionServiceImpl implements UserActionService {
     public UserActionAudit toEntity(UserActionDTO userActionDTO) {
 
         UserActionAudit userActionAudit = new UserActionAudit();
-        userActionAudit.setFeedbackType(userActionDTO.getFeedbackType());
+        userActionAudit.setFeedbackType(userActionDTO.getFeedbackMessage());
         userActionAudit.setResourceId(userActionDTO.getResourceId());
         userActionAudit.setUpdatedOn(new Date());
 
