@@ -59,7 +59,7 @@ public class UserActionController {
 
     @PostMapping("/login")
     @Trace
-    public ResponseEntity<LoginResponse> userFeedback(@RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest loginRequest) {
 
         try {
             final UserSession userSession = userAuthService.login(loginRequest);
