@@ -156,6 +156,7 @@ public class IngestionServiceImpl implements IngestionService {
             searchClientHelper.makeHttpPostRequest(resourceRequestEntry);
         } else {
             logger.error("The current resource entry is either invalid or already exists in the database, so ignoring its creation");
+            throw new IllegalArgumentException("entry is invalid or duplicate, discarding the entry");
         }
 
     }
