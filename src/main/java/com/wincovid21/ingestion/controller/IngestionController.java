@@ -34,7 +34,7 @@ public class IngestionController {
         try {
               ingestionService.resourceCreate(resourceDetailDTO);
         } catch (IllegalArgumentException e) {
-            logger.error("The entry is invalid so discarding it", e);
+            logger.error("The entry is invalid so discarding it for insertion", e);
             return new ResponseEntity<>("Invalid entry, please try again with valid values", HttpStatus.BAD_REQUEST);
         }
         catch (Exception e) {
