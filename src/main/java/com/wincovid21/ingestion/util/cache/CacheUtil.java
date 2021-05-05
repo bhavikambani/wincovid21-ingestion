@@ -148,7 +148,7 @@ public class CacheUtil {
                                 if (elements != null && elements.length == 2 && elements[0] != null && elements[1] != null) {
                                     Long category = Long.parseLong(elements[0].toString());
                                     Long resourceType = Long.parseLong(elements[1].toString());
-                                    log.info("Iterating Types from DB | Category # {}, resource # {}", category, resourceType);
+                                    log.info("All # Iterating Types from DB | Category # {}, resource # {}", category, resourceType);
 
                                     Optional<ResourceCategory> optionalResourceCategory = resourceCategoryRepository.findById(category);
                                     Optional<ResourceSubCategory> optionalResourceSubCategory = resourceSubcategoryRepository.findById(resourceType);
@@ -159,7 +159,7 @@ public class CacheUtil {
                                         if (CollectionUtils.isEmpty(resourceSubCategories)) {
                                             resourceSubCategories = Collections.synchronizedSet(new HashSet<>());
                                         }
-                                        log.info("Iterating Category Entity # {}, resource # {}", optionalResourceCategory.get().getCategoryName(), optionalResourceSubCategory.get().getSubCategoryName());
+                                        log.info("All # Iterating Category Entity # {}, resource # {}", optionalResourceCategory.get().getCategoryName(), optionalResourceSubCategory.get().getSubCategoryName());
                                         resourceSubCategories.add(optionalResourceSubCategory.get());
                                         resourceCategoryListConcurrentHashMap.put(optionalResourceCategory.get(), resourceSubCategories);
                                     }
@@ -178,7 +178,7 @@ public class CacheUtil {
                                 existingResources.add(resource);
                                 resourceCategorySetMap.put(categoryDetail, existingResources);
                             });
-                            log.info("Iterating Resource # {}, resource category # {}", categoryDetail, resourceCategorySetMap.get(categoryDetail).stream().map(Resource::getResourceName).collect(Collectors.toList()));
+                            log.info("All # Iterating Resource # {}, resource category # {}", categoryDetail, resourceCategorySetMap.get(categoryDetail).stream().map(Resource::getResourceName).collect(Collectors.toList()));
                         });
                         return resourceCategorySetMap;
                     }
@@ -350,9 +350,9 @@ public class CacheUtil {
                     if (cityDetails.isPresent()) {
                         Map<Category, Set<Resource>> resourceDetails = Collections.synchronizedMap(new TreeMap<>());
                         List<ResourceDetails> resourceDetailsList = cityDetails.get().getResourceDetails();
-                        if (CollectionUtils.isEmpty(resourceDetailsList)) {
-                            return Collections.emptyMap();
-                        }
+//                        if (CollectionUtils.isEmpty(resourceDetailsList)) {
+//                            return Collections.emptyMap();
+//                        }
 
                         resourceDetailsList.forEach(r -> {
                             ResourceCategory category = r.getCategory();
