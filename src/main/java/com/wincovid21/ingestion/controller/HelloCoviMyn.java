@@ -22,10 +22,13 @@ import org.springframework.web.bind.annotation.RestController;
 public class HelloCoviMyn {
 
     private final UserActionAuditRepository userActionFlagRepository;
+    @Autowired
     private final UserActionService userActionService;
     @Autowired
     private UserRepository userRepository;
+    @Autowired
     private final CityRepository cityRepository;
+    @Autowired
     private final CacheUtil cacheUtil;
 
 
@@ -52,6 +55,9 @@ public class HelloCoviMyn {
         log.info("Types # {}", userDetails.getUserType());
 
         log.info("Feedback List # {}", cacheUtil.getUseWiseAllowedFeedback(userDetails.getUserType().getId()));
+
+        log.info("All States # {}", cacheUtil.getAllStateCityDetails());
+
 
         log.info("Sessions # {}", userTypeAllowedFeedbackTypesRepository.findAllByUserType(userDetails.getUserType().getId()));
         return true;

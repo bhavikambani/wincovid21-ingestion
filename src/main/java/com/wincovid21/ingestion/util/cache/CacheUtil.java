@@ -27,6 +27,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public class CacheUtil {
     private static final String FEEDBACK_TYPES_LIST = "FEEDBACK_TYPES_LIST";
+    private static final String ALL_STATE_CITY_LIST = "ALL_STATE_CITY";
     private static final String RESOURCE_CITY_STATE = "RESOURCE_STATE_CITY";
     private static final String RESOURCE_LIST = "RESOURCE_LIST";
     private static final String USER_TYPE_WISE_FEEDBACK_TYPES_LIST = "USER_TYPE_WISE_FEEDBACK_TYPES_LIST";
@@ -44,6 +45,7 @@ public class CacheUtil {
     // Cache Elements
     private LoadingCache<String, List<FeedbackType>> feedbackTypesList;
     private LoadingCache<String, Map<StateDetails, Set<CityDetails>>> resourceStateCityDetails;
+    private LoadingCache<String, Map<StateDetails, Set<CityDetails>>> allStateCityDetails;
     private LoadingCache<String, Map<Category, Set<Resource>>> availableResources;
     private LoadingCache<String, Map<Long, List<FeedbackType>>> userTypeWiseAvailableFeedbackTypesList;
 
@@ -180,6 +182,52 @@ public class CacheUtil {
                     return Collections.emptyMap();
                 });
         cacheMetrics.addCache(RESOURCE_LIST, availableResources);
+
+        allStateCityDetails = Caffeine
+                .newBuilder()
+                .refreshAfterWrite(cacheConfig.getCityStateListCacheInvalidationTTL(), TimeUnit.SECONDS)
+                .maximumSize(1000)
+                .recordStats()
+                .build(key -> {
+                    if (ALL_STATE_CITY_LIST.equals(key)) {
+
+                        final Map<StateDetails, Set<CityDetails>> resourceStateCityDetailsList = new TreeMap<>();
+                        Iterable<State> allStateDetails = stateRepository.findAll();
+                        Map<State, List<City>> stateCityDetails = new ConcurrentHashMap<>();
+
+                        allStateDetails.forEach(state -> {
+                            if (state != null) {
+                                try {
+                                    final List<City> cities = stateCityDetails.get(state) != null ? stateCityDetails.get(state) : new ArrayList<>();
+                                    List<City> stateCities = state.getCities();
+                                    cities.addAll(stateCities);
+                                    stateCityDetails.put(state, cities);
+                                } catch (Exception e) {
+                                    log.error("Exception while processing state # {}", state, e);
+                                }
+                            }
+                        });
+
+                        stateCityDetails.forEach((state, cities) -> {
+                            StateDetails stateDetail = StateDetails.builder().id(state.getId()).iconName(state.getIconPath()).stateName(state.getStateName()).build();
+                            cities.forEach(c -> {
+                                CityDetails cityDetails = CityDetails.builder().id(c.getId()).cityName(c.getCityName()).iconName(c.getIconPath()).build();
+                                Set<CityDetails> existingResources = resourceStateCityDetailsList.get(stateDetail);
+                                if (CollectionUtils.isEmpty(existingResources)) {
+                                    existingResources = Collections.synchronizedSet(new TreeSet<>());
+                                }
+                                existingResources.add(cityDetails);
+                                resourceStateCityDetailsList.put(stateDetail, existingResources);
+                            });
+                            log.info("Iterating Category # {}, resource # {}", stateDetail, resourceStateCityDetailsList.get(stateDetail).stream().map(CityDetails::getCityName).collect(Collectors.toList()));
+                        });
+                        return resourceStateCityDetailsList;
+                    }
+                    return Collections.emptyMap();
+                });
+        cacheMetrics.addCache(ALL_STATE_CITY_LIST, allStateCityDetails);
+
+
         resourceStateCityDetails = Caffeine
                 .newBuilder()
                 .refreshAfterWrite(cacheConfig.getCityStateListCacheInvalidationTTL(), TimeUnit.SECONDS)
@@ -262,6 +310,11 @@ public class CacheUtil {
     @Trace
     public List<FeedbackType> getFeedbackList() {
         return feedbackTypesList.get(FEEDBACK_TYPES_LIST);
+    }
+
+    @Trace
+    public Map<StateDetails, Set<CityDetails>> getAllStateCityDetails() {
+        return allStateCityDetails.get(ALL_STATE_CITY_LIST);
     }
 
     @Trace

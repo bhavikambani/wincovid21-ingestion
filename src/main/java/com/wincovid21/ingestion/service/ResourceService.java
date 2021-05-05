@@ -17,6 +17,9 @@ public interface ResourceService {
     Map<StateDetails, Set<CityDetails>> getStateCityList();
 
     @Trace
+    Map<StateDetails, Set<CityDetails>> getAllStateCityList();
+
+    @Trace
     Map<Category, Set<Resource>> getAvailableResources();
 
     @Trace
