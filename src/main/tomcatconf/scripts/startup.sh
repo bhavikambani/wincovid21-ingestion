@@ -1,0 +1,2 @@
+#!/bin/bash
+java -XX:-OmitStackTraceInFastThrow -server  -XX:-OmitStackTraceInFastThrow -XX:+UseStringDeduplication -XX:+DisableExplicitGC -XX:+UnlockExperimentalVMOptions -Dlogging.path=/data/wincovid21-ingestion/wincovid21-ingestion/  -Xms16384m -XX:+UseG1GC -Xmx16384m -jar -Dspring.profiles.active=prod  /data/wincovid21-ingestion/wincovid21-ingestion/target/wincovid21-ingestion.jar &
