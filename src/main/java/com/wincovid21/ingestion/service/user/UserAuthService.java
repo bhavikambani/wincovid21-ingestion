@@ -48,7 +48,7 @@ public class UserAuthService {
             throw new IllegalArgumentException("Password name can not be null or empty");
         }
 
-        Optional<UserDetails> byUserNameAndPassword = userRepository.findByUserNameAndPassword(loginRequest.getUser(), loginRequest.getPassword());
+        Optional<UserDetails> byUserNameAndPassword = userRepository.findByUserNameAndPassword(loginRequest.getUser().toLowerCase(), loginRequest.getPassword());
 
         if (!(byUserNameAndPassword.isPresent())) {
             throw new UnAuthorizedUserException("Username or password is not valid.");
