@@ -43,7 +43,7 @@ public class UserActionController {
                                                 final @RequestHeader(value = "covid-at", required = false) String authToken) {
         try {
             log.info("Feedback request # {}, auth @ {}", userActionAudit, authToken);
-            userActionService.updateAndIndexStatus(userActionService.toEntity(userActionAudit), authToken);
+            userActionService.updateAndIndexStatus(userActionAudit, userActionService.toEntity(userActionAudit), authToken);
             return ResponseEntity.status(HttpStatus.OK).body(true);
         } catch (UnAuthorizedUserException ue) {
             log.error("UnAuthorised user action # {}.", userActionAudit, ue);
