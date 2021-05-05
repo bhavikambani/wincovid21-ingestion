@@ -33,13 +33,19 @@ public class ResourceController {
 
     @Trace
     @GetMapping
-    public IngestionResponse<List<ResourceCategoryDetails>> availableResources(@RequestParam(required = false, name = "cityId") Long cityId) {
+    public IngestionResponse<List<ResourceCategoryDetails>> availableResources(@RequestParam(required = false, name = "cityId") Long cityId,
+                                                                               @RequestParam(required = false, name = "all") Boolean allResources) {
         final Map<Category, Set<Resource>> availableResources;
-        if (cityId == null || cityId <= 0) {
-            availableResources = resourceService.getAllAvailableResources();
-        } else {
+
+        log.info("Get Resources # City # {}, All Resources # {}", cityId, allResources);
+        if (cityId != null) {
             availableResources = resourceService.getAvailableResourcesForCity(cityId);
+        } else if (allResources != null && allResources) {
+            availableResources = resourceService.getAllCategoryResources();
+        } else {
+            availableResources = resourceService.getAllAvailableResources();
         }
+
         final List<ResourceCategoryDetails> resourceCategoryDetails = new ArrayList<>();
 
         if (CollectionUtils.isEmpty(availableResources)) {
