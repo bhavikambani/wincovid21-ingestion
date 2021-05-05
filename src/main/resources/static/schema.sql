@@ -5,26 +5,35 @@ create table user_actions_audit (
 	updated_on DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
-create table resource_details (
-    id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(1024) NOT NULL,
-    address VARCHAR(1024),
-    category_id INT NOT NULL,
-    resource_type VARCHAR(120) NOT NULL,
-    pin_code BIGINT(12),
-    description VARCHAR(1024),
-    phone_1 VARCHAR(40) NOT NULL,
-    phone_2 VARCHAR(40),
-    email VARCHAR(120),
-    city VARCHAR(120) NOT NULL,
-    state VARCHAR(120) NOT NULL,
-    quantity_available VARCHAR(120) NOT NULL,
-    price VARCHAR(512),
-    created_by VARCHAR(120),
-	created_on BIGINT(20),
-	updated_on BIGINT(20),
-	is_verified BOOLEAN NOT NULL
-);
+CREATE TABLE `resource_details` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(1024) COLLATE utf8_unicode_ci NOT NULL,
+  `address` varchar(1024) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `category` int(11) NOT NULL,
+  `resource_type` int(11) NOT NULL,
+  `pin_code` bigint(12) DEFAULT NULL,
+  `description` varchar(1024) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `phone_1` varchar(40) COLLATE utf8_unicode_ci NOT NULL,
+  `phone_2` varchar(40) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `email` varchar(120) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `city` int(11) NOT NULL,
+  `state` int(11) NOT NULL,
+  `quantity_available` varchar(120) COLLATE utf8_unicode_ci NOT NULL,
+  `price` varchar(512) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `created_by` varchar(120) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `created_on` bigint(20) DEFAULT NULL,
+  `updated_on` bigint(20) DEFAULT NULL,
+  `is_verified` tinyint(1) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `city` (`city`),
+  KEY `state` (`state`),
+  KEY `category` (`category`),
+  KEY `resource_type` (`resource_type`),
+  CONSTRAINT `resource_details_ibfk_1` FOREIGN KEY (`city`) REFERENCES `city_details` (`id`),
+  CONSTRAINT `resource_details_ibfk_2` FOREIGN KEY (`state`) REFERENCES `state_details` (`id`),
+  CONSTRAINT `resource_details_ibfk_3` FOREIGN KEY (`category`) REFERENCES `resource_category` (`id`),
+  CONSTRAINT `resource_details_ibfk_4` FOREIGN KEY (`resource_type`) REFERENCES `resource_sub_category` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=5784 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 create table state_details (
 	`id` int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,

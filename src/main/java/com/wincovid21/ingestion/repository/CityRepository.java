@@ -13,5 +13,8 @@ public interface CityRepository extends CrudRepository<City, Long>, JpaSpecifica
     @Query(value = "select c from City c where c.cityName = :name ")
     City fetchCityIdForName(String name);
 
+    @Query(value = "select c from City c where c.id = :id ")
+    City findCityById(Long id);
+
 }
 

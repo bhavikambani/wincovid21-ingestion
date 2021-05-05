@@ -5,10 +5,9 @@ import com.google.api.services.drive.model.File;
 import com.google.api.services.sheets.v4.Sheets;
 import com.google.api.services.sheets.v4.model.ValueRange;
 import com.wincovid21.ingestion.client.SearchClientHelper;
-import com.wincovid21.ingestion.entity.ResourceCategory;
-import com.wincovid21.ingestion.entity.ResourceDetails;
-import com.wincovid21.ingestion.entity.ResourceRequestEntry;
-import com.wincovid21.ingestion.entity.ResourceSubCategory;
+import com.wincovid21.ingestion.domain.ResourceDetailDTO;
+import com.wincovid21.ingestion.entity.*;
+import com.wincovid21.ingestion.repository.CityRepository;
 import com.wincovid21.ingestion.repository.ResourceCategoryRepository;
 import com.wincovid21.ingestion.repository.ResourceDetailsRepository;
 import com.wincovid21.ingestion.repository.ResourceSubcategoryRepository;
@@ -19,6 +18,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
+import java.util.regex.*;
 import java.util.Objects;
 
 public class IngestionServiceImpl implements IngestionService {
@@ -29,6 +29,8 @@ public class IngestionServiceImpl implements IngestionService {
     private ResourceDetailsRepository resourceDetailsRepository;
     @Autowired
     private ResourceCategoryRepository resourceCategoryRepository;
+    @Autowired
+    private CityRepository cityRepository;
     @Autowired
     private ResourceSubcategoryRepository resourceSubcategoryRepository;
     @Autowired
@@ -143,6 +145,31 @@ public class IngestionServiceImpl implements IngestionService {
             logger.error("Exception occurred due to ", e);
             return 0;
         }
+    }
+
+    public void resourceCreate(ResourceDetailDTO resourceDetailDTO) throws Exception {
+
+        if (validateResourceDetailDTO(resourceDetailDTO)) {
+            ResourceDetails resourceDetails = resourceDetailsUtil.transformEntryToEntity(resourceDetailDTO);
+            resourceDetailsRepository.save(resourceDetails);
+            ResourceRequestEntry resourceRequestEntry = resourceDetailsUtil.convertToRREntry(resourceDetails);
+            searchClientHelper.makeHttpPostRequest(resourceRequestEntry);
+        } else {
+            logger.error("The current resource entry is either invalid or already exists in the database, so ignoring its creation");
+        }
+
+    }
+
+    private boolean validateResourceDetailDTO(ResourceDetailDTO resourceDetailDTO) {
+       ResourceDetails resourceDetails = resourceDetailsRepository.fetchResourceForDedup(resourceDetailDTO.getPhone1(),
+              resourceDetailDTO.getResourceTypeId(),resourceDetailDTO.getCategoryId());
+       City resourceCity = cityRepository.findCityById(resourceDetailDTO.getCityId());
+       Pattern regexPhone = Pattern.compile("^(\\+\\d{1,2})?\\s?\\(?\\d{3}\\)?[\\s.-]?\\d{3}[\\s.-]?\\d{4}$");
+       Matcher regexMatcher = regexPhone.matcher(resourceDetailDTO.getPhone1());
+       if(Objects.nonNull(resourceDetails) || resourceCity.getState().getId()!=resourceDetailDTO.getStateId() || !regexMatcher.matches()) {
+           return false;
+       }
+       return true;
     }
 
 

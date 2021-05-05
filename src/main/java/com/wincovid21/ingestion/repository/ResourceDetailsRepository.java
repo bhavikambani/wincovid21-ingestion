@@ -30,4 +30,7 @@ public interface ResourceDetailsRepository extends CrudRepository<ResourceDetail
     @Query(value = "select * from resource_details where phone_1 = :phoneNumber and resource_type = :resourceType and name= :name and category = :category", nativeQuery = true)
     ResourceDetails fetchResourceByPrimaryKey(String phoneNumber, String name, Long resourceType, Long category);
 
+    @Query(value = "select * from resource_details where phone_1 = :phoneNumber and resource_type = :resourceType and category = :category", nativeQuery = true)
+    ResourceDetails fetchResourceForDedup(String phoneNumber, Long resourceType, Long category);
+
 }
