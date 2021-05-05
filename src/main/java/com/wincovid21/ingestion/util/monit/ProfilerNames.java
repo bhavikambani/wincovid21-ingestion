@@ -7,4 +7,6 @@ public final class ProfilerNames {
 
     public static final String HELLO_TOTAL = "hello.total";
 
+    public static final String LEAD_CREATE_FROM_PORTAL = "lead.create";
+
 }

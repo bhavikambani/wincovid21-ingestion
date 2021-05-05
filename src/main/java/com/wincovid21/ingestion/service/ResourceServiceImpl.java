@@ -115,6 +115,7 @@ public class ResourceServiceImpl implements ResourceService {
             }
             if (atLeastOneFlagChanges) {
                 resourceDetailsRepository.save(resourceDetails);
+                resourceDetails.setUpdatedOn(System.currentTimeMillis());
                 ResourceRequestEntry resourceRequestEntry = ResourceDetailsUtil.convertToRREntry(resourceDetails);
                 log.info("Publishing Audit event to ES # {}", resourceRequestEntry);
                 IngestionResponse<HttpEntity> earchResponse = searchClientHelper.makeHttpPostRequest(resourceRequestEntry);
