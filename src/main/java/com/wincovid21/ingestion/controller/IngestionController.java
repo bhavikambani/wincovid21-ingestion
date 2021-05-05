@@ -33,9 +33,13 @@ public class IngestionController {
     public ResponseEntity<String> resourceCreate(@RequestBody ResourceDetailDTO resourceDetailDTO) {
         try {
               ingestionService.resourceCreate(resourceDetailDTO);
-        } catch (Exception e) {
-            logger.error("The lead entry creation was unsuccessfull due to", e);
-            return new ResponseEntity<>("The lead entry creation was unsuccessfull, Please try again", HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (IllegalArgumentException e) {
+            logger.error("The entry is invalid so discarding it", e);
+            return new ResponseEntity<>("Invalid entry, please try again with valid values", HttpStatus.BAD_REQUEST);
+        }
+        catch (Exception e) {
+            logger.error("The lead entry creation was unsuccessful due to", e);
+            return new ResponseEntity<>("The lead entry creation was unsuccessful, Please try again", HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return new ResponseEntity<>("Successfully created the lead entry", HttpStatus.OK);
     }
