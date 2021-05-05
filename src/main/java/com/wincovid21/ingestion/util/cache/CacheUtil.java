@@ -350,9 +350,9 @@ public class CacheUtil {
                     if (cityDetails.isPresent()) {
                         Map<Category, Set<Resource>> resourceDetails = Collections.synchronizedMap(new TreeMap<>());
                         List<ResourceDetails> resourceDetailsList = cityDetails.get().getResourceDetails();
-//                        if (CollectionUtils.isEmpty(resourceDetailsList)) {
-//                            return Collections.emptyMap();
-//                        }
+                        if (CollectionUtils.isEmpty(resourceDetailsList)) {
+                            return Collections.emptyMap();
+                        }
 
                         resourceDetailsList.forEach(r -> {
                             ResourceCategory category = r.getCategory();
@@ -425,7 +425,7 @@ public class CacheUtil {
 
     @Trace
     public Map<Category, Set<Resource>> getAllCategoryResources() {
-        return availableResources.get(ALL_RESOURCE_LIST);
+        return allResources.get(ALL_RESOURCE_LIST);
     }
 
     @Trace
