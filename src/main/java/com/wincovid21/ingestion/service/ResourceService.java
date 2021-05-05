@@ -31,5 +31,9 @@ public interface ResourceService {
     @Trace
     void updateWithUnVerified(Long resourceId, String verificationType) throws UnAuthorizedUserException, IOException;
 
+    @Trace
     void updateES(Long resourceId, FeedbackType feedbackType) throws IOException;
+
+    @Trace
+    Map<Category, Set<Resource>> getAllCategoryResources();
 }
