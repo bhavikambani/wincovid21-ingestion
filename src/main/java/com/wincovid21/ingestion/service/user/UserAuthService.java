@@ -59,6 +59,7 @@ public class UserAuthService {
         userSession.setUser(userDetails);
         userSession.setTokenId(UUID.randomUUID().toString());
         userSession.setCreatedOn(new Date());
+        userSession.setName(userDetails.getName());
 
         userSessionRepository.save(userSession);
         log.info("User Session Updated for user # {}, with # {}", userDetails, userSession);
