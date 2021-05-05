@@ -34,8 +34,8 @@ public class IngestionController {
         try {
               ingestionService.resourceCreate(resourceDetailDTO);
         } catch (IllegalArgumentException e) {
-            logger.error("The entry is invalid so discarding it for insertion", e);
-            return new ResponseEntity<>("Invalid entry, please try again with valid values", HttpStatus.BAD_REQUEST);
+            logger.error("The entry is invalid/duplicate so discarding it for insertion", e);
+            return new ResponseEntity<>("Invalid/Duplicate entry, please try again with valid values", HttpStatus.BAD_REQUEST);
         }
         catch (Exception e) {
             logger.error("The lead entry creation was unsuccessful due to", e);
