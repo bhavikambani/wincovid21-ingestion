@@ -29,6 +29,7 @@ public class CacheUtil {
     private static final String FEEDBACK_TYPES_LIST = "FEEDBACK_TYPES_LIST";
     private static final String ALL_STATE_CITY_LIST = "ALL_STATE_CITY";
     private static final String RESOURCE_CITY_STATE = "RESOURCE_STATE_CITY";
+    private static final String CITY_WISE_AVAILABLE_RESOURCES = "CITY_WISE_AVAILABLE_RESOURCES";
     private static final String RESOURCE_LIST = "RESOURCE_LIST";
     private static final String USER_TYPE_WISE_FEEDBACK_TYPES_LIST = "USER_TYPE_WISE_FEEDBACK_TYPES_LIST";
 
@@ -48,7 +49,7 @@ public class CacheUtil {
     private LoadingCache<String, Map<StateDetails, Set<CityDetails>>> allStateCityDetails;
     private LoadingCache<String, Map<Category, Set<Resource>>> availableResources;
     private LoadingCache<String, Map<Long, List<FeedbackType>>> userTypeWiseAvailableFeedbackTypesList;
-
+    private LoadingCache<Long, Map<Category, Set<Resource>>> cityWiseAvailableResourceAndCategory;
 
     public CacheUtil(@NonNull final CacheConfig cacheConfig,
                      @NonNull final FeedbackTypesRepository feedbackTypesRepository,
@@ -130,7 +131,7 @@ public class CacheUtil {
                 .build(key -> {
                     if (RESOURCE_LIST.equals(key)) {
                         log.info("Loading Cache.");
-                        final Map<Category, Set<Resource>> resourceCategorySetMap = new ConcurrentHashMap<>();
+                        final Map<Category, Set<Resource>> resourceCategorySetMap = Collections.synchronizedMap(new TreeMap<>());
                         final List<Object[]> categoryResourceMapping = resourceDetailsRepository.fetchCategoryResourceMapping();
                         Map<ResourceCategory, Set<ResourceSubCategory>> resourceCategoryListConcurrentHashMap = new ConcurrentHashMap<>();
 
@@ -170,12 +171,12 @@ public class CacheUtil {
                                 Resource resource = Resource.builder().id(c.getId()).resourceName(c.getSubCategoryName()).icon(c.getIconName()).build();
                                 Set<Resource> existingResources = resourceCategorySetMap.get(categoryDetail);
                                 if (CollectionUtils.isEmpty(existingResources)) {
-                                    existingResources = Collections.synchronizedSet(new HashSet<>());
+                                    existingResources = Collections.synchronizedSet(new TreeSet<>());
                                 }
                                 existingResources.add(resource);
                                 resourceCategorySetMap.put(categoryDetail, existingResources);
                             });
-                            log.info("Iterating Category # {}, resource # {}", categoryDetail, resourceCategorySetMap.get(categoryDetail).stream().map(Resource::getResourceName).collect(Collectors.toList()));
+                            log.info("Iterating Resource # {}, resource category # {}", categoryDetail, resourceCategorySetMap.get(categoryDetail).stream().map(Resource::getResourceName).collect(Collectors.toList()));
                         });
                         return resourceCategorySetMap;
                     }
@@ -219,7 +220,11 @@ public class CacheUtil {
                                 existingResources.add(cityDetails);
                                 resourceStateCityDetailsList.put(stateDetail, existingResources);
                             });
-                            log.info("Iterating Category # {}, resource # {}", stateDetail, resourceStateCityDetailsList.get(stateDetail).stream().map(CityDetails::getCityName).collect(Collectors.toList()));
+                            try {
+                                log.info("Iterating Category # {}, resource # {}", stateDetail, resourceStateCityDetailsList.get(stateDetail).stream().map(CityDetails::getCityName).collect(Collectors.toList()));
+                            } catch (Exception e) {
+                                log.error("IGNORE THIS EXCEPTION #### Exception while iterating for logs", e);
+                            }
                         });
                         return resourceStateCityDetailsList;
                     }
@@ -286,6 +291,43 @@ public class CacheUtil {
                     return Collections.emptyMap();
                 });
         cacheMetrics.addCache(RESOURCE_CITY_STATE, resourceStateCityDetails);
+
+
+        cityWiseAvailableResourceAndCategory = Caffeine
+                .newBuilder()
+                .refreshAfterWrite(cacheConfig.getCityStateListCacheInvalidationTTL(), TimeUnit.SECONDS)
+                .maximumSize(100000)
+                .recordStats()
+                .build(cityId -> {
+                    final Optional<City> cityDetails = cityRepository.findById(cityId);
+                    if (cityDetails.isPresent()) {
+                        Map<Category, Set<Resource>> resourceDetails = Collections.synchronizedMap(new TreeMap<>());
+                        List<ResourceDetails> resourceDetailsList = cityDetails.get().getResourceDetails();
+                        if (CollectionUtils.isEmpty(resourceDetailsList)) {
+                            return Collections.emptyMap();
+                        }
+
+                        resourceDetailsList.forEach(r -> {
+                            ResourceCategory category = r.getCategory();
+                            ResourceSubCategory resourceType = r.getResourceType();
+
+                            Category categoryDomain = Category.builder().categoryName(category.getCategoryName()).icon(category.getIconName()).id(category.getId()).build();
+                            Resource resourceDomain = Resource.builder().icon(resourceType.getIconName()).resourceName(resourceType.getSubCategoryName()).id(resourceType.getId()).build();
+
+                            Set<Resource> resourceForCategory = resourceDetails.get(categoryDomain);
+                            if (resourceForCategory == null) {
+                                resourceForCategory = new TreeSet<>();
+                            }
+
+                            resourceForCategory.add(resourceDomain);
+                            resourceDetails.put(categoryDomain, resourceForCategory);
+                        });
+                        return resourceDetails;
+                    } else {
+                        return Collections.emptyMap();
+                    }
+                });
+        cacheMetrics.addCache(CITY_WISE_AVAILABLE_RESOURCES, cityWiseAvailableResourceAndCategory);
     }
 
     @Trace
@@ -332,6 +374,11 @@ public class CacheUtil {
     @Trace
     public Map<Category, Set<Resource>> getAvailableResources() {
         return availableResources.get(RESOURCE_LIST);
+    }
+
+    @Trace
+    public Map<Category, Set<Resource>> getCityWiseAvailableResources(@NonNull final Long cityId) {
+        return cityWiseAvailableResourceAndCategory.get(cityId);
     }
 
 }

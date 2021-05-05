@@ -26,5 +26,8 @@ public class UserSession {
     @Column(name = "created_on", updatable = false)
     private Date createdOn;
 
+    @Transient
+    private String name;
+
 
 }

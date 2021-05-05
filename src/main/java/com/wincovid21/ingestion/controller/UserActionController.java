@@ -68,6 +68,7 @@ public class UserActionController {
                     .message("Login Successful")
                     .token(userSession.getTokenId())
                     .user(loginRequest.getUser())
+                    .name(userSession.getName())
                     .build();
 
             return ResponseEntity.ok(response);

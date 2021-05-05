@@ -20,7 +20,10 @@ public interface ResourceService {
     Map<StateDetails, Set<CityDetails>> getAllStateCityList();
 
     @Trace
-    Map<Category, Set<Resource>> getAvailableResources();
+    Map<Category, Set<Resource>> getAllAvailableResources();
+
+    @Trace
+    Map<Category, Set<Resource>> getAvailableResourcesForCity(Long cityId);
 
     @Trace
     void updateWithVerified(Long resourceId, String verificationType) throws UnAuthorizedUserException, IOException;

@@ -3,6 +3,7 @@
 
 # Log file
 *.log
+./console.log
 
 .idea/
 covimyn-ingestion.iml
