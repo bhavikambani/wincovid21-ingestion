@@ -82,7 +82,7 @@ public class UserActionServiceImpl implements UserActionService {
         UserActionAudit save = userActionAuditRepository.save(userActionAudit);
         log.info("UserActionAudit # {}, auth # {} saved into DB", save, authToken);
         log.info("Feedback Message # {}", userActionAudit.getFeedbackType());
-        Optional<FeedbackType> byFeedbackMessage = feedbackTypesRepository.findByFeedbackMessage(userActionAudit.getFeedbackType());
+        Optional<FeedbackType> byFeedbackMessage = feedbackTypesRepository.findByFeedbackMessageAndFeedbackCode(userActionAudit.getFeedbackType(), userActionAudit.getFeedbackType());
 
         log.info("byFeedbackMessage" + byFeedbackMessage);
 

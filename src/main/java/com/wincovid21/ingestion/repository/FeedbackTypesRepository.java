@@ -11,4 +11,6 @@ import java.util.Optional;
 public interface FeedbackTypesRepository extends CrudRepository<FeedbackType, Long>, JpaSpecificationExecutor<FeedbackType> {
 
     Optional<FeedbackType> findByFeedbackMessage(String feedbackMessage);
+
+    Optional<FeedbackType> findByFeedbackMessageAndFeedbackCode(String feedbackMessage, String feedbackCode);
 }
