@@ -220,7 +220,11 @@ public class CacheUtil {
                                 existingResources.add(cityDetails);
                                 resourceStateCityDetailsList.put(stateDetail, existingResources);
                             });
-                            log.info("Iterating Category # {}, resource # {}", stateDetail, resourceStateCityDetailsList.get(stateDetail).stream().map(CityDetails::getCityName).collect(Collectors.toList()));
+                            try {
+                                log.info("Iterating Category # {}, resource # {}", stateDetail, resourceStateCityDetailsList.get(stateDetail).stream().map(CityDetails::getCityName).collect(Collectors.toList()));
+                            } catch (Exception e) {
+                                log.error("IGNORE THIS EXCEPTION #### Exception while iterating for logs", e);
+                            }
                         });
                         return resourceStateCityDetailsList;
                     }
