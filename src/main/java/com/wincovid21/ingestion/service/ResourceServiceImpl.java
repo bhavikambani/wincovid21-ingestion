@@ -52,8 +52,13 @@ public class ResourceServiceImpl implements ResourceService {
     }
 
     @Override
-    public Map<Category, Set<Resource>> getAvailableResources() {
+    public Map<Category, Set<Resource>> getAllAvailableResources() {
         return cacheUtil.getAvailableResources();
+    }
+
+    @Override
+    public Map<Category, Set<Resource>> getAvailableResourcesForCity(Long cityId) {
+        return cacheUtil.getCityWiseAvailableResources(cityId);
     }
 
     @Override

@@ -33,8 +33,13 @@ public class ResourceController {
 
     @Trace
     @GetMapping
-    public IngestionResponse<List<ResourceCategoryDetails>> availableResources() {
-        final Map<Category, Set<Resource>> availableResources = resourceService.getAvailableResources();
+    public IngestionResponse<List<ResourceCategoryDetails>> availableResources(@RequestParam(required = false, name = "city") Long cityId) {
+        final Map<Category, Set<Resource>> availableResources;
+        if (cityId == null || cityId <= 0) {
+            availableResources = resourceService.getAllAvailableResources();
+        } else {
+            availableResources = resourceService.getAvailableResourcesForCity(cityId);
+        }
         final List<ResourceCategoryDetails> resourceCategoryDetails = new ArrayList<>();
 
         if (CollectionUtils.isEmpty(availableResources)) {
