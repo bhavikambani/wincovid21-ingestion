@@ -31,7 +31,7 @@ public class CacheUtil {
     private static final String RESOURCE_CITY_STATE = "RESOURCE_STATE_CITY";
     private static final String CITY_WISE_AVAILABLE_RESOURCES = "CITY_WISE_AVAILABLE_RESOURCES";
     private static final String AVAILABLE_RESOURCE_LIST = "AVAILABLE_RESOURCE_LIST";
-    private static final String ALL_RESOURCE_LIST = "RESOURCE_LIST";
+    private static final String ALL_RESOURCE_LIST = "ALL_RESOURCE_LIST";
     private static final String USER_TYPE_WISE_FEEDBACK_TYPES_LIST = "USER_TYPE_WISE_FEEDBACK_TYPES_LIST";
 
     private final CacheConfig cacheConfig;

@@ -37,10 +37,11 @@ public class ResourceController {
                                                                                @RequestParam(required = false, name = "all") Boolean allResources) {
         final Map<Category, Set<Resource>> availableResources;
 
+        log.info("Get Resources # City # {}, All Resources # {}", cityId, allResources);
         if (cityId != null) {
             availableResources = resourceService.getAvailableResourcesForCity(cityId);
         } else if (allResources != null && allResources) {
-            availableResources = resourceService.getAllAvailableResources();
+            availableResources = resourceService.getAllCategoryResources();
         } else {
             availableResources = resourceService.getAllAvailableResources();
         }
