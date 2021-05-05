@@ -161,8 +161,8 @@ public class IngestionServiceImpl implements IngestionService {
     }
 
     private boolean validateResourceDetailDTO(ResourceDetailDTO resourceDetailDTO) {
-       ResourceDetails resourceDetails = resourceDetailsRepository.fetchResourceByPrimaryKey(resourceDetailDTO.getPhone1(),
-               resourceDetailDTO.getName(),resourceDetailDTO.getResourceTypeId(),resourceDetailDTO.getCategoryId());
+       ResourceDetails resourceDetails = resourceDetailsRepository.fetchResourceForDedup(resourceDetailDTO.getPhone1(),
+              resourceDetailDTO.getResourceTypeId(),resourceDetailDTO.getCategoryId());
        City resourceCity = cityRepository.findCityById(resourceDetailDTO.getCityId());
        Pattern regexPhone = Pattern.compile("^(\\+\\d{1,2})?\\s?\\(?\\d{3}\\)?[\\s.-]?\\d{3}[\\s.-]?\\d{4}$");
        Matcher regexMatcher = regexPhone.matcher(resourceDetailDTO.getPhone1());
