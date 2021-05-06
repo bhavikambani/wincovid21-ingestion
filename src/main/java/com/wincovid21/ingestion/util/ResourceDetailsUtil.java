@@ -6,14 +6,14 @@ import com.wincovid21.ingestion.domain.VerificationType;
 import com.wincovid21.ingestion.entity.ResourceAvailabilityDetails;
 import com.wincovid21.ingestion.entity.ResourceDetails;
 import com.wincovid21.ingestion.entity.ResourceRequestEntry;
+import com.wincovid21.ingestion.entity.ResourceSubCategory;
 import com.wincovid21.ingestion.repository.CityRepository;
 import com.wincovid21.ingestion.repository.ResourceCategoryRepository;
 import com.wincovid21.ingestion.repository.ResourceSubcategoryRepository;
 import com.wincovid21.ingestion.repository.StateRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 
 public class ResourceDetailsUtil {
@@ -126,26 +126,34 @@ public class ResourceDetailsUtil {
         return resourceDetails;
     }
 
-    public ResourceDetails transformEntryToEntity(ResourceDetailDTO resourceDetailDTO) {
-        ResourceDetails resourceDetails = new ResourceDetails();
-//        resourceDetails.setCategory(resourceCategoryRepository.findResourceCategoryById(resourceDetailDTO.getCategoryId()));
-        resourceDetails.setResourceType(resourceSubcategoryRepository.findResourceSubCategoryById(resourceDetailDTO.getResourceTypeId()));
-        resourceDetails.setState(stateRepository.findStateById(resourceDetailDTO.getStateId()));
-        resourceDetails.setCity(cityRepository.findCityById(resourceDetailDTO.getCityId()));
-        resourceDetails.setName(resourceDetailDTO.getName());
-        resourceDetails.setPhone1(resourceDetailDTO.getPhone1());
-        resourceDetails.setCreatedBy("External User");
-        resourceDetails.setCreatedOn(System.currentTimeMillis());
-        resourceDetails.setUpdatedOn(System.currentTimeMillis());
-//        resourceDetails.setAddress("");
-//        resourceDetails.setPinCode(0l);
-//        resourceDetails.setDescription("");
-        resourceDetails.setPhone2(resourceDetailDTO.getPhone2());
-//        resourceDetails.setPrice("");
-//        resourceDetails.setEmail("");
-        resourceDetails.setQuantityAvailable(AvailabilityType.OUT_OF_STOCK.getValue());
-        resourceDetails.setVerified(false);
-        return resourceDetails;
+    public List<ResourceDetails> transformEntryToEntity(ResourceDetailDTO resourceDetailDTO) {
+        final List<Long> resourceTypeIds = resourceDetailDTO.getResourceTypeIds();
+        List<ResourceDetails> resourceDetailsList = Collections.synchronizedList(new ArrayList<>());
+
+        resourceTypeIds.forEach(typeId -> {
+            Optional<ResourceSubCategory> resourceSubcategoryRepositoryByIdOptional = resourceSubcategoryRepository.findById(typeId);
+
+            if (resourceSubcategoryRepositoryByIdOptional.isPresent()) {
+                ResourceSubCategory resourceSubCategory = resourceSubcategoryRepositoryByIdOptional.get();
+                ResourceDetails resourceDetails = new ResourceDetails();
+                resourceDetails.setCategory(resourceSubCategory.getCategory());
+                resourceDetails.setResourceType(resourceSubCategory);
+                resourceDetails.setState(stateRepository.findStateById(resourceDetailDTO.getStateId()));
+                resourceDetails.setCity(cityRepository.findCityById(resourceDetailDTO.getCityId()));
+                resourceDetails.setName(resourceDetailDTO.getName());
+                resourceDetails.setPhone1(resourceDetailDTO.getPhone1());
+                resourceDetails.setCreatedBy("External User");
+                resourceDetails.setCreatedOn(System.currentTimeMillis());
+                resourceDetails.setUpdatedOn(System.currentTimeMillis());
+                resourceDetails.setPhone2(resourceDetailDTO.getPhone2());
+                resourceDetails.setQuantityAvailable(AvailabilityType.OUT_OF_STOCK.getValue());
+                resourceDetails.setVerified(false);
+
+                resourceDetailsList.add(resourceDetails);
+            }
+        });
+
+        return resourceDetailsList;
     }
 
 
