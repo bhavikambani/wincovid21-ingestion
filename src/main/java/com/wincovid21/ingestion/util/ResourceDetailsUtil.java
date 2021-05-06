@@ -1,13 +1,15 @@
 package com.wincovid21.ingestion.util;
 
 import com.wincovid21.ingestion.domain.AvailabilityType;
-import com.wincovid21.ingestion.domain.Resource;
 import com.wincovid21.ingestion.domain.ResourceDetailDTO;
 import com.wincovid21.ingestion.domain.VerificationType;
 import com.wincovid21.ingestion.entity.ResourceAvailabilityDetails;
 import com.wincovid21.ingestion.entity.ResourceDetails;
 import com.wincovid21.ingestion.entity.ResourceRequestEntry;
-import com.wincovid21.ingestion.repository.*;
+import com.wincovid21.ingestion.repository.CityRepository;
+import com.wincovid21.ingestion.repository.ResourceCategoryRepository;
+import com.wincovid21.ingestion.repository.ResourceSubcategoryRepository;
+import com.wincovid21.ingestion.repository.StateRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
@@ -28,7 +30,7 @@ public class ResourceDetailsUtil {
 
     public ResourceDetails convertToEntity(List<Object> objectList) {
         ResourceDetails resourceDetails = new ResourceDetails();
-        stampCategoryResourceCityState(objectList,resourceDetails);
+        stampCategoryResourceCityState(objectList, resourceDetails);
         resourceDetails.setName(String.valueOf(objectList.get(2)));
         resourceDetails.setDescription(String.valueOf(objectList.get(5)));
         resourceDetails.setPhone1(String.valueOf(objectList.get(6)));
@@ -68,7 +70,7 @@ public class ResourceDetailsUtil {
         resourceRequestEntry.setAddress(resourceDetails.getAddress());
         resourceRequestEntry.setDescription(resourceDetails.getDescription());
         resourceRequestEntry.setEmail(resourceDetails.getEmail());
-        if(Objects.nonNull(resourceDetails.getPinCode())) {
+        if (Objects.nonNull(resourceDetails.getPinCode())) {
             resourceRequestEntry.setPincode(resourceDetails.getPinCode().toString());
         }
         resourceRequestEntry.setCity(resourceDetails.getCity().getCityName());
@@ -85,16 +87,16 @@ public class ResourceDetailsUtil {
         resourceRequestEntry.setSubcategoryId(resourceDetails.getResourceType().getId());
         resourceRequestEntry.setCityId(resourceDetails.getCity().getId());
         resourceRequestEntry.setStateId(resourceDetails.getState().getId());
-        if(AvailabilityType.AVAILABLE.getValue().equalsIgnoreCase(resourceDetails.getQuantityAvailable())) {
+        if (AvailabilityType.AVAILABLE.getValue().equalsIgnoreCase(resourceDetails.getQuantityAvailable())) {
             resourceRequestEntry.setAvailable(true);
         } else {
             resourceRequestEntry.setAvailable(false);
         }
-        return  resourceRequestEntry;
+        return resourceRequestEntry;
     }
 
-    public ResourceDetails updateEntity(List<Object> objectList,ResourceDetails resourceDetails) {
-        stampCategoryResourceCityState(objectList,resourceDetails);
+    public ResourceDetails updateEntity(List<Object> objectList, ResourceDetails resourceDetails) {
+        stampCategoryResourceCityState(objectList, resourceDetails);
         resourceDetails.setName(String.valueOf(objectList.get(2)));
         resourceDetails.setDescription(String.valueOf(objectList.get(5)));
         resourceDetails.setPhone1(String.valueOf(objectList.get(6)));
@@ -116,7 +118,7 @@ public class ResourceDetailsUtil {
         return resourceDetails;
     }
 
-    private ResourceDetails stampCategoryResourceCityState(List<Object> objectList,ResourceDetails resourceDetails) {
+    private ResourceDetails stampCategoryResourceCityState(List<Object> objectList, ResourceDetails resourceDetails) {
         resourceDetails.setCategory(resourceCategoryRepository.fetchCategoryIdForName(String.valueOf(objectList.get(3))));
         resourceDetails.setResourceType(resourceSubcategoryRepository.fetchResourceTypeIdForName(String.valueOf(objectList.get(4))));
         resourceDetails.setCity(cityRepository.fetchCityIdForName(String.valueOf(objectList.get(9))));
@@ -126,7 +128,7 @@ public class ResourceDetailsUtil {
 
     public ResourceDetails transformEntryToEntity(ResourceDetailDTO resourceDetailDTO) {
         ResourceDetails resourceDetails = new ResourceDetails();
-        resourceDetails.setCategory(resourceCategoryRepository.findResourceCategoryById(resourceDetailDTO.getCategoryId()));
+//        resourceDetails.setCategory(resourceCategoryRepository.findResourceCategoryById(resourceDetailDTO.getCategoryId()));
         resourceDetails.setResourceType(resourceSubcategoryRepository.findResourceSubCategoryById(resourceDetailDTO.getResourceTypeId()));
         resourceDetails.setState(stateRepository.findStateById(resourceDetailDTO.getStateId()));
         resourceDetails.setCity(cityRepository.findCityById(resourceDetailDTO.getCityId()));
@@ -138,7 +140,7 @@ public class ResourceDetailsUtil {
 //        resourceDetails.setAddress("");
 //        resourceDetails.setPinCode(0l);
 //        resourceDetails.setDescription("");
-//        resourceDetails.setPhone2("");
+        resourceDetails.setPhone2(resourceDetailDTO.getPhone2());
 //        resourceDetails.setPrice("");
 //        resourceDetails.setEmail("");
         resourceDetails.setQuantityAvailable(AvailabilityType.OUT_OF_STOCK.getValue());

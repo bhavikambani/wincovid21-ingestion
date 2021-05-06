@@ -66,13 +66,19 @@ public class ResourceController {
     @GetMapping("/city-states")
     @Trace
     public IngestionResponse<List<StateWiseConfiguredCities>> getStateCityDetails(
-            @RequestParam(name = "all", required = false, defaultValue = "false") Boolean allCities) {
+            @RequestParam(name = "all", required = false, defaultValue = "false") Boolean allCities,
+            @RequestParam(name = "allStates", required = false, defaultValue = "false") Boolean allStates,
+            @RequestParam(name = "stateId", required = false, defaultValue = "false") Long stateId) {
         final Map<StateDetails, Set<CityDetails>> stateCityDetails;
+
         if (allCities != null && allCities) {
             stateCityDetails = resourceService.getAllStateCityList();
+        } else if (stateId != null) {
+            stateCityDetails = resourceService.getAllStateCityList(stateId);
         } else {
             stateCityDetails = resourceService.getStateCityList();
         }
+
         final List<StateWiseConfiguredCities> stateWiseConfiguredCities = new ArrayList<>();
         stateCityDetails.forEach((s, cities) -> {
             StateWiseConfiguredCities stateWiseConfiguredCity = new StateWiseConfiguredCities(s);

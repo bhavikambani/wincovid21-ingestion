@@ -18,8 +18,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
-import java.util.regex.*;
 import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class IngestionServiceImpl implements IngestionService {
 
@@ -53,7 +54,7 @@ public class IngestionServiceImpl implements IngestionService {
                     .execute();
             for (int i = 1; i < readResult.getValues().size(); i++) {
                 List<Object> rowValue = readResult.getValues().get(i);
-                if(String.valueOf(rowValue.get(3)).isEmpty() || String.valueOf(rowValue.get(4)).isEmpty() || String.valueOf(rowValue.get(6)).isEmpty() || String.valueOf(rowValue.get(9)).isEmpty() || String.valueOf(rowValue.get(10)).isEmpty()) {
+                if (String.valueOf(rowValue.get(3)).isEmpty() || String.valueOf(rowValue.get(4)).isEmpty() || String.valueOf(rowValue.get(6)).isEmpty() || String.valueOf(rowValue.get(9)).isEmpty() || String.valueOf(rowValue.get(10)).isEmpty()) {
                     logger.error("Discarding the row as one or more of mandatory fields are missing.");
                     continue;
                 }
@@ -114,7 +115,7 @@ public class IngestionServiceImpl implements IngestionService {
                     .execute();
             for (int i = 1; i < readResult.getValues().size(); i++) {
                 List<Object> rowValue = readResult.getValues().get(i);
-                if(String.valueOf(rowValue.get(3)).isEmpty() || String.valueOf(rowValue.get(4)).isEmpty() || String.valueOf(rowValue.get(6)).isEmpty() || String.valueOf(rowValue.get(9)).isEmpty() || String.valueOf(rowValue.get(10)).isEmpty()) {
+                if (String.valueOf(rowValue.get(3)).isEmpty() || String.valueOf(rowValue.get(4)).isEmpty() || String.valueOf(rowValue.get(6)).isEmpty() || String.valueOf(rowValue.get(9)).isEmpty() || String.valueOf(rowValue.get(10)).isEmpty()) {
                     logger.error("Discarding the row as one or more of mandatory fields are missing.");
                     continue;
                 }
@@ -162,15 +163,15 @@ public class IngestionServiceImpl implements IngestionService {
     }
 
     private boolean validateResourceDetailDTO(ResourceDetailDTO resourceDetailDTO) {
-       ResourceDetails resourceDetails = resourceDetailsRepository.fetchResourceForDedup(resourceDetailDTO.getPhone1(),
-              resourceDetailDTO.getResourceTypeId(),resourceDetailDTO.getCategoryId());
-       City resourceCity = cityRepository.findCityById(resourceDetailDTO.getCityId());
-       Pattern regexPhone = Pattern.compile("^(\\+\\d{1,2})?\\s?\\(?\\d{3}\\)?[\\s.-]?\\d{3}[\\s.-]?\\d{4}$");
-       Matcher regexMatcher = regexPhone.matcher(resourceDetailDTO.getPhone1());
-       if(Objects.nonNull(resourceDetails) || resourceCity.getState().getId()!=resourceDetailDTO.getStateId() || !regexMatcher.matches()) {
-           return false;
-       }
-       return true;
+        ResourceDetails resourceDetails = resourceDetailsRepository.fetchResourceForDedup(resourceDetailDTO.getPhone1(),
+                resourceDetailDTO.getResourceTypeId(), resourceDetailDTO.getResourceTypeId());
+        City resourceCity = cityRepository.findCityById(resourceDetailDTO.getCityId());
+        Pattern regexPhone = Pattern.compile("^(\\+\\d{1,2})?\\s?\\(?\\d{3}\\)?[\\s.-]?\\d{3}[\\s.-]?\\d{4}$");
+        Matcher regexMatcher = regexPhone.matcher(resourceDetailDTO.getPhone1());
+        if (Objects.nonNull(resourceDetails) || resourceCity.getState().getId() != resourceDetailDTO.getStateId() || !regexMatcher.matches()) {
+            return false;
+        }
+        return true;
     }
 
 
