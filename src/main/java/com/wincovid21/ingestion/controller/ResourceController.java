@@ -68,7 +68,7 @@ public class ResourceController {
     public IngestionResponse<List<StateWiseConfiguredCities>> getStateCityDetails(
             @RequestParam(name = "all", required = false, defaultValue = "false") Boolean allCities,
             @RequestParam(name = "allStates", required = false, defaultValue = "false") Boolean allStates,
-            @RequestParam(name = "stateId", required = false, defaultValue = "false") Long stateId) {
+            @RequestParam(name = "stateId", required = false) Long stateId) {
         final Map<StateDetails, Set<CityDetails>> stateCityDetails;
 
         if (allCities != null && allCities) {
