@@ -17,9 +17,7 @@ import org.apache.http.HttpEntity;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 @Service
 @Slf4j
@@ -49,6 +47,21 @@ public class ResourceServiceImpl implements ResourceService {
     @Override
     public Map<StateDetails, Set<CityDetails>> getAllStateCityList() {
         return cacheUtil.getAllStateCityDetails();
+    }
+
+    @Override
+    public Map<StateDetails, Set<CityDetails>> getAllStateCityList(@NonNull final Long stateId) {
+        final Map<StateDetails, Set<CityDetails>> allStateCityDetails = cacheUtil.getAllStateCityDetails();
+        Optional<StateDetails> stateDetail = allStateCityDetails.keySet().stream().filter(s -> s.getId().equals(stateId)).findFirst();
+
+        if (stateDetail.isPresent()) {
+            Set<CityDetails> cityDetails = allStateCityDetails.get(stateDetail.get());
+            final Map<StateDetails, Set<CityDetails>> stateDetailsSetMap = new TreeMap<>();
+            stateDetailsSetMap.put(stateDetail.get(), cityDetails);
+            return stateDetailsSetMap;
+        } else {
+            return Collections.emptyMap();
+        }
     }
 
     @Override

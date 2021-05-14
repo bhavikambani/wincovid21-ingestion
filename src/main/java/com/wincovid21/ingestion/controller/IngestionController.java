@@ -1,6 +1,7 @@
 package com.wincovid21.ingestion.controller;
 
 import com.wincovid21.ingestion.domain.ResourceDetailDTO;
+import com.wincovid21.ingestion.exception.InvalidLeadCreationDataException;
 import com.wincovid21.ingestion.service.IngestionServiceImpl;
 import com.wincovid21.ingestion.util.monit.ProfileResponseType;
 import com.wincovid21.ingestion.util.monit.Profiler;
@@ -39,7 +40,7 @@ public class IngestionController {
         try {
             profiler.incrementCount(ProfilerNames.LEAD_CREATE_FROM_PORTAL, ProfileResponseType.TOTAL);
             ingestionService.resourceCreate(resourceDetailDTO);
-        } catch (IllegalArgumentException e) {
+        } catch (InvalidLeadCreationDataException e) {
             profiler.incrementCount(ProfilerNames.LEAD_CREATE_FROM_PORTAL, ProfileResponseType.BAD_REQUEST);
             logger.error("The entry is invalid so discarding it", e);
             return new ResponseEntity<>("Invalid entry, please try again with valid values", HttpStatus.BAD_REQUEST);

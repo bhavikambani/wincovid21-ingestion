@@ -1,15 +1,18 @@
 package com.wincovid21.ingestion.service;
 
 import com.wincovid21.ingestion.domain.ResourceDetailDTO;
+import com.wincovid21.ingestion.exception.InvalidLeadCreationDataException;
 
 public interface IngestionService {
 
-   int resourceBulkCreate();
+    int resourceBulkCreate();
 
-   Long fetchLastModifiedOn();
+    Long fetchLastModifiedOn();
 
-   int resourceBulkUpdate();
+    int resourceBulkUpdate();
 
-   void resourceCreate(ResourceDetailDTO resourceDetailDTO) throws Exception;
+    void resourceCreate(ResourceDetailDTO resourceDetailDTO) throws Exception;
+
+    void validate(ResourceDetailDTO resourceDetailDTO) throws InvalidLeadCreationDataException, InvalidLeadCreationDataException;
 
 }

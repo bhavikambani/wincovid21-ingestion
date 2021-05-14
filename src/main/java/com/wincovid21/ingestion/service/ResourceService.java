@@ -7,6 +7,7 @@ import com.wincovid21.ingestion.domain.Resource;
 import com.wincovid21.ingestion.domain.StateDetails;
 import com.wincovid21.ingestion.entity.FeedbackType;
 import com.wincovid21.ingestion.exception.UnAuthorizedUserException;
+import lombok.NonNull;
 
 import java.io.IOException;
 import java.util.Map;
@@ -18,6 +19,9 @@ public interface ResourceService {
 
     @Trace
     Map<StateDetails, Set<CityDetails>> getAllStateCityList();
+
+    @Trace
+    Map<StateDetails, Set<CityDetails>> getAllStateCityList(@NonNull final Long stateId);
 
     @Trace
     Map<Category, Set<Resource>> getAllAvailableResources();
