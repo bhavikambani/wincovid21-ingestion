@@ -4,7 +4,6 @@ import lombok.Data;
 import lombok.ToString;
 
 import javax.persistence.*;
-import java.lang.annotation.Native;
 
 @Entity
 @Table(name = "resource_details")
@@ -73,5 +72,9 @@ public class ResourceDetails {
 
     @Column(name = "is_verified")
     private boolean isVerified;
+
+    @Column(name = "is_valid")
+    private boolean isValid = true;
+
 }
 

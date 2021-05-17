@@ -36,6 +36,7 @@ public class ResourceDetailsUtil {
         resourceDetails.setPhone1(String.valueOf(objectList.get(6)));
         resourceDetails.setPhone2(String.valueOf(objectList.get(7)));
         resourceDetails.setEmail(String.valueOf(objectList.get(8)));
+        resourceDetails.setValid(true);
         resourceDetails.setAddress(String.valueOf(objectList.get(11)));
         if (!objectList.get(12).toString().isEmpty())
             resourceDetails.setPinCode(Long.valueOf(objectList.get(12).toString()));
@@ -46,6 +47,7 @@ public class ResourceDetailsUtil {
         resourceDetails.setCreatedBy(String.valueOf(objectList.get(16)));
         resourceDetails.setCreatedOn(System.currentTimeMillis());
         resourceDetails.setUpdatedOn(System.currentTimeMillis());
+        resourceDetails.setValid(true);
         if (String.valueOf(objectList.get(20)).equalsIgnoreCase(VerificationType.VERIFIED.getValue())) {
             resourceDetails.setVerified(true);
         } else {
@@ -87,6 +89,7 @@ public class ResourceDetailsUtil {
         resourceRequestEntry.setSubcategoryId(resourceDetails.getResourceType().getId());
         resourceRequestEntry.setCityId(resourceDetails.getCity().getId());
         resourceRequestEntry.setStateId(resourceDetails.getState().getId());
+        resourceRequestEntry.setValid(resourceDetails.isValid());
         if (AvailabilityType.AVAILABLE.getValue().equalsIgnoreCase(resourceDetails.getQuantityAvailable())) {
             resourceRequestEntry.setAvailable(true);
         } else {
@@ -110,6 +113,7 @@ public class ResourceDetailsUtil {
         if (!objectList.get(14).toString().isEmpty())
             resourceDetails.setPrice(objectList.get(14).toString());
         resourceDetails.setUpdatedOn(System.currentTimeMillis());
+        resourceDetails.setValid(true);
         if (String.valueOf(objectList.get(20)).equalsIgnoreCase(VerificationType.VERIFIED.getValue())) {
             resourceDetails.setVerified(true);
         } else {

@@ -9,6 +9,7 @@ public enum VerificationTypeEntity {
 
     VERIFIED("VERIFIED"),
     NOCHANGE("NOCHANGE"),
+    INVALID("INVALID"),
     UNVERIFIED("UNVERIFIED");
 
     private String type;

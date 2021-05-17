@@ -120,6 +120,18 @@ public class ResourceServiceImpl implements ResourceService {
             ResourceDetails resourceDetails = resourceEntityOptional.get();
             if (VerificationTypeEntity.NOCHANGE != feedbackType.getVerificationStatus()) {
                 atLeastOneFlagChanges = true;
+                switch (feedbackType.getVerificationStatus()) {
+                    case INVALID:
+                        resourceDetails.setValid(false);
+                        break;
+                    case VERIFIED:
+                    case UNVERIFIED:
+                        resourceDetails.setVerified(feedbackType.getVerificationStatus() == VerificationTypeEntity.VERIFIED);
+                        break;
+                    default:
+                        log.error("Unknown FeedbackType # {}", feedbackType.getVerificationStatus());
+                        break;
+                }
                 resourceDetails.setVerified(feedbackType.getVerificationStatus() == VerificationTypeEntity.VERIFIED);
             }
             if (AvailabilityType.NOCHANGE != feedbackType.getAvailabilityStatus()) {
