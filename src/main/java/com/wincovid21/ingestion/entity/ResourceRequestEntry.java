@@ -46,5 +46,6 @@ public class ResourceRequestEntry {
     private String updatedAt;
     @NonNull
     private boolean isVerified;
-
+    @NonNull
+    private boolean isValid;
 }

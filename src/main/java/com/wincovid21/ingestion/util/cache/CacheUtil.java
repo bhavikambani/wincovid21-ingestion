@@ -343,7 +343,7 @@ public class CacheUtil {
         cityWiseAvailableResourceAndCategory = Caffeine
                 .newBuilder()
                 .refreshAfterWrite(cacheConfig.getCityStateListCacheInvalidationTTL(), TimeUnit.SECONDS)
-                .maximumSize(100000)
+                .maximumSize(10)
                 .recordStats()
                 .build(cityId -> {
                     final Optional<City> cityDetails = cityRepository.findById(cityId);
@@ -355,6 +355,9 @@ public class CacheUtil {
                         }
 
                         resourceDetailsList.forEach(r -> {
+                            if (!r.isValid()) {
+                                return;
+                            }
                             ResourceCategory category = r.getCategory();
                             ResourceSubCategory resourceType = r.getResourceType();
 
